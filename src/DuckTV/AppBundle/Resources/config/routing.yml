@@ -1,0 +1,3 @@
+duck_tv_app_homepage:
+    path:     /
+    defaults: { _controller: DuckTVAppBundle:Default:index }

@@ -1,0 +1,3 @@
+duck_tv_app:
+    resource: "@DuckTVAppBundle/Resources/config/routing.yml"
+    prefix:   /

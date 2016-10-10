@@ -1,0 +1,101 @@
+<?php
+
+namespace DuckTV\AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Grid
+ *
+ * @ORM\Table(name="grid")
+ * @ORM\Entity(repositoryClass="DuckTV\AppBundle\Repository\GridRepository")
+ */
+class Grid
+{
+    /**
+     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Week", mappedBy="grid")
+     */
+    private $weeks;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="year", type="integer", unique=true)
+     */
+    private $year;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="model", type="boolean")
+     */
+    private $model;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set year
+     *
+     * @param integer $year
+     *
+     * @return Grid
+     */
+    public function setYear($year)
+    {
+        $this->year = $year;
+
+        return $this;
+    }
+
+    /**
+     * Get year
+     *
+     * @return int
+     */
+    public function getYear()
+    {
+        return $this->year;
+    }
+
+    /**
+     * Set model
+     *
+     * @param boolean $model
+     *
+     * @return Grid
+     */
+    public function setModel($model)
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+    /**
+     * Get model
+     *
+     * @return bool
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+}
