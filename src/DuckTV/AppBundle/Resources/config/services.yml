@@ -2,3 +2,12 @@ services:
 #    duck_tv_app.example:
 #        class: DuckTV\AppBundle\Example
 #        arguments: ["@service_id", "plain_value", %parameter%]
+
+    duck_tv_app.doctrine_listener.video_creation:
+        class: DuckTV\AppBundle\DoctrineListener\VideoCreationListener
+        arguments: ['@service_container']
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+
+    duck_tv_app.iso8601_to_seconds:
+        class: DuckTV\AppBundle\Service\ISO8601ToSeconds

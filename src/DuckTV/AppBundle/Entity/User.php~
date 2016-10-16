@@ -13,6 +13,14 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->videos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
      * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Video", mappedBy="user")
      */
     private $videos;
@@ -221,5 +229,39 @@ class User
     public function getMail()
     {
         return $this->mail;
+    }
+
+    /**
+     * Add video
+     *
+     * @param \DuckTV\AppBundle\Entity\Video $video
+     *
+     * @return User
+     */
+    public function addVideo(\DuckTV\AppBundle\Entity\Video $video)
+    {
+        $this->videos[] = $video;
+
+        return $this;
+    }
+
+    /**
+     * Remove video
+     *
+     * @param \DuckTV\AppBundle\Entity\Video $video
+     */
+    public function removeVideo(\DuckTV\AppBundle\Entity\Video $video)
+    {
+        $this->videos->removeElement($video);
+    }
+
+    /**
+     * Get videos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVideos()
+    {
+        return $this->videos;
     }
 }

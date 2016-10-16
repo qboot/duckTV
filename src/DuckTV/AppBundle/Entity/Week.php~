@@ -13,6 +13,14 @@ use Doctrine\ORM\Mapping as ORM;
 class Week
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->days = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
      * @ORM\ManyToOne(targetEntity="DuckTV\AppBundle\Entity\Grid", inversedBy="weeks")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -103,5 +111,63 @@ class Week
     public function getModel()
     {
         return $this->model;
+    }
+
+    /**
+     * Set grid
+     *
+     * @param \DuckTV\AppBundle\Entity\Grid $grid
+     *
+     * @return Week
+     */
+    public function setGrid(\DuckTV\AppBundle\Entity\Grid $grid)
+    {
+        $this->grid = $grid;
+
+        return $this;
+    }
+
+    /**
+     * Get grid
+     *
+     * @return \DuckTV\AppBundle\Entity\Grid
+     */
+    public function getGrid()
+    {
+        return $this->grid;
+    }
+
+    /**
+     * Add day
+     *
+     * @param \DuckTV\AppBundle\Entity\Day $day
+     *
+     * @return Week
+     */
+    public function addDay(\DuckTV\AppBundle\Entity\Day $day)
+    {
+        $this->days[] = $day;
+
+        return $this;
+    }
+
+    /**
+     * Remove day
+     *
+     * @param \DuckTV\AppBundle\Entity\Day $day
+     */
+    public function removeDay(\DuckTV\AppBundle\Entity\Day $day)
+    {
+        $this->days->removeElement($day);
+    }
+
+    /**
+     * Get days
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDays()
+    {
+        return $this->days;
     }
 }

@@ -13,6 +13,13 @@ use Doctrine\ORM\Mapping as ORM;
 class Broadcast
 {
     /**
+     * Constructor
+     */
+    public function __construct() {
+
+    }
+
+    /**
      * @ORM\ManyToOne(targetEntity="DuckTV\AppBundle\Entity\Video", inversedBy="broadcasts")
      * @ORM\JoinColumn(nullable=false)
      */

@@ -13,15 +13,25 @@ use Doctrine\ORM\Mapping as ORM;
 class Slot
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->broadcasts = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->beginning = new \DateTime();
+        $this->end = new \DateTime();
+    }
+
+    /**
      * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Broadcast", mappedBy="slot")
      */
     private $broadcasts;
 
     /**
-     * @ORM\ManyToOne(targetEntity="DuckTV\AppBundle\Entity\Day", inversedBy="slots")
+     * @ORM\ManyToOne(targetEntity="DuckTV\AppBundle\Entity\Grid", inversedBy="slots")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $day;
+    private $grid;
 
     /**
      * @var int
@@ -31,6 +41,13 @@ class Slot
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255)
+     */
+    private $name;
 
     /**
      * @var \DateTime
@@ -53,6 +70,12 @@ class Slot
      */
     private $duration;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="model", type="boolean")
+     */
+    private $model;
 
     /**
      * Get id
@@ -135,13 +158,6 @@ class Slot
     {
         return $this->duration;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->broadcasts = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
     /**
      * Add broadcast
@@ -178,26 +194,74 @@ class Slot
     }
 
     /**
-     * Set day
+     * Set grid
      *
-     * @param \DuckTV\AppBundle\Entity\Day $day
+     * @param \DuckTV\AppBundle\Entity\Grid $grid
      *
      * @return Slot
      */
-    public function setDay(\DuckTV\AppBundle\Entity\Day $day)
+    public function setGrid(\DuckTV\AppBundle\Entity\Grid $grid)
     {
-        $this->day = $day;
+        $this->grid = $grid;
 
         return $this;
     }
 
     /**
-     * Get day
+     * Get grid
      *
-     * @return \DuckTV\AppBundle\Entity\Day
+     * @return \DuckTV\AppBundle\Entity\Grid
      */
-    public function getDay()
+    public function getGrid()
     {
-        return $this->day;
+        return $this->grid;
+    }
+
+    /**
+     * Set model
+     *
+     * @param boolean $model
+     *
+     * @return Slot
+     */
+    public function setModel($model)
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+    /**
+     * Get model
+     *
+     * @return boolean
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Slot
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }

@@ -3,6 +3,7 @@
 namespace DuckTV\AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Category
@@ -12,6 +13,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Category
 {
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->videos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
     /**
      * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Video", mappedBy="category")
      */
@@ -33,6 +41,11 @@ class Category
      */
     private $name;
 
+    /**
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     */
+    private $slug;
 
     /**
      * Get id
@@ -67,13 +80,6 @@ class Category
     {
         return $this->name;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->videos = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
     /**
      * Add video
@@ -107,5 +113,29 @@ class Category
     public function getVideos()
     {
         return $this->videos;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return Category
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

@@ -3,9 +3,10 @@
 namespace DuckTV\AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Grid
+ * Day
  *
  * @ORM\Table(name="grid")
  * @ORM\Entity(repositoryClass="DuckTV\AppBundle\Repository\GridRepository")
@@ -13,9 +14,22 @@ use Doctrine\ORM\Mapping as ORM;
 class Grid
 {
     /**
-     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Week", mappedBy="grid")
+     * Constructor
      */
-    private $weeks;
+    public function __construct() {
+        $this->slots = new ArrayCollection();
+        $this->date = new \Datetime();
+    }
+
+    /**
+     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Slot", mappedBy="day")
+     */
+    private $slots;
+
+    /**
+     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Transition", mappedBy="day")
+     */
+    private $transitions;
 
     /**
      * @var int
@@ -29,9 +43,30 @@ class Grid
     /**
      * @var int
      *
-     * @ORM\Column(name="year", type="integer", unique=true)
+     * @ORM\Column(name="year", type="integer")
      */
     private $year;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="week_number", type="integer")
+     */
+    private $weekNumber;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="date")
+     */
+    private $date;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="day", type="string", length=255)
+     */
+    private $day;
 
     /**
      * @var bool
@@ -52,27 +87,51 @@ class Grid
     }
 
     /**
-     * Set year
+     * Set date
      *
-     * @param integer $year
+     * @param \DateTime $date
      *
      * @return Grid
      */
-    public function setYear($year)
+    public function setDate($date)
     {
-        $this->year = $year;
+        $this->date = $date;
 
         return $this;
     }
 
     /**
-     * Get year
+     * Get date
      *
-     * @return int
+     * @return \DateTime
      */
-    public function getYear()
+    public function getDate()
     {
-        return $this->year;
+        return $this->date;
+    }
+
+    /**
+     * Set day
+     *
+     * @param string $day
+     *
+     * @return Grid
+     */
+    public function setDay($day)
+    {
+        $this->day = $day;
+
+        return $this;
+    }
+
+    /**
+     * Get day
+     *
+     * @return string
+     */
+    public function getDay()
+    {
+        return $this->day;
     }
 
     /**
@@ -98,45 +157,120 @@ class Grid
     {
         return $this->model;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->weeks = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
     /**
-     * Add week
+     * Add slot
      *
-     * @param \DuckTV\AppBundle\Entity\Week $week
+     * @param \DuckTV\AppBundle\Entity\Slot $slot
      *
      * @return Grid
      */
-    public function addWeek(\DuckTV\AppBundle\Entity\Week $week)
+    public function addSlot(\DuckTV\AppBundle\Entity\Slot $slot)
     {
-        $this->weeks[] = $week;
+        $this->slots[] = $slot;
 
         return $this;
     }
 
     /**
-     * Remove week
+     * Remove slot
      *
-     * @param \DuckTV\AppBundle\Entity\Week $week
+     * @param \DuckTV\AppBundle\Entity\Slot $slot
      */
-    public function removeWeek(\DuckTV\AppBundle\Entity\Week $week)
+    public function removeSlot(\DuckTV\AppBundle\Entity\Slot $slot)
     {
-        $this->weeks->removeElement($week);
+        $this->slots->removeElement($slot);
     }
 
     /**
-     * Get weeks
+     * Get slots
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getWeeks()
+    public function getSlots()
     {
-        return $this->weeks;
+        return $this->slots;
+    }
+
+    /**
+     * Add transition
+     *
+     * @param \DuckTV\AppBundle\Entity\Transition $transition
+     *
+     * @return Grid
+     */
+    public function addTransition(\DuckTV\AppBundle\Entity\Transition $transition)
+    {
+        $this->transitions[] = $transition;
+
+        return $this;
+    }
+
+    /**
+     * Remove transition
+     *
+     * @param \DuckTV\AppBundle\Entity\Transition $transition
+     */
+    public function removeTransition(\DuckTV\AppBundle\Entity\Transition $transition)
+    {
+        $this->transitions->removeElement($transition);
+    }
+
+    /**
+     * Get transitions
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTransitions()
+    {
+        return $this->transitions;
+    }
+
+    /**
+     * Set year
+     *
+     * @param integer $year
+     *
+     * @return Grid
+     */
+    public function setYear($year)
+    {
+        $this->year = $year;
+
+        return $this;
+    }
+
+    /**
+     * Get year
+     *
+     * @return integer
+     */
+    public function getYear()
+    {
+        return $this->year;
+    }
+
+    /**
+     * Set weekNumber
+     *
+     * @param integer $weekNumber
+     *
+     * @return Grid
+     */
+    public function setWeekNumber($weekNumber)
+    {
+        $this->weekNumber = $weekNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get weekNumber
+     *
+     * @return integer
+     */
+    public function getWeekNumber()
+    {
+        return $this->weekNumber;
     }
 }

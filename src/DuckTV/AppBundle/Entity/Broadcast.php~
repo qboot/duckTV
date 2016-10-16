@@ -5,13 +5,20 @@ namespace DuckTV\AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Broadcasting
+ * Broadcast
  *
  * @ORM\Table(name="broadcast")
  * @ORM\Entity(repositoryClass="DuckTV\AppBundle\Repository\BroadcastRepository")
  */
 class Broadcast
 {
+    /**
+     * Constructor
+     */
+    public function __construct() {
+
+    }
+
     /**
      * @ORM\ManyToOne(targetEntity="DuckTV\AppBundle\Entity\Video", inversedBy="broadcasts")
      * @ORM\JoinColumn(nullable=false)
@@ -73,5 +80,53 @@ class Broadcast
     public function getPosition()
     {
         return $this->position;
+    }
+
+    /**
+     * Set video
+     *
+     * @param \DuckTV\AppBundle\Entity\Video $video
+     *
+     * @return Broadcast
+     */
+    public function setVideo(\DuckTV\AppBundle\Entity\Video $video)
+    {
+        $this->video = $video;
+
+        return $this;
+    }
+
+    /**
+     * Get video
+     *
+     * @return \DuckTV\AppBundle\Entity\Video
+     */
+    public function getVideo()
+    {
+        return $this->video;
+    }
+
+    /**
+     * Set slot
+     *
+     * @param \DuckTV\AppBundle\Entity\Slot $slot
+     *
+     * @return Broadcast
+     */
+    public function setSlot(\DuckTV\AppBundle\Entity\Slot $slot)
+    {
+        $this->slot = $slot;
+
+        return $this;
+    }
+
+    /**
+     * Get slot
+     *
+     * @return \DuckTV\AppBundle\Entity\Slot
+     */
+    public function getSlot()
+    {
+        return $this->slot;
     }
 }

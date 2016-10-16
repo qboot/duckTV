@@ -9,9 +9,19 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="video")
  * @ORM\Entity(repositoryClass="DuckTV\AppBundle\Repository\VideoRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Video
 {
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->broadcasts = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->submissionDate = new \DateTime();
+    }
+
     /**
      * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Broadcast", mappedBy="video")
      */
@@ -40,6 +50,13 @@ class Video
     /**
      * @var string
      *
+     * @ORM\Column(name="video_id", type="string", length=255)
+     */
+    private $videoId;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
@@ -54,23 +71,75 @@ class Video
     /**
      * @var string
      *
-     * @ORM\Column(name="url", type="string", length=255)
+     * @ORM\Column(name="channel_id", type="string", length=255)
      */
-    private $url;
+    private $channelId;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="channel", type="string", length=255)
+     * @ORM\Column(name="channel_title", type="string", length=255)
      */
-    private $channel;
+    private $channelTitle;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="thumbnail", type="string", length=255)
+     * @ORM\Column(name="description", type="text")
      */
-    private $thumbnail;
+    private $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="thumbnail_standard", type="string", length=255)
+     */
+    private $thumbnailStandard;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="thumbnail_maxres", type="string", length=255)
+     */
+    private $thumbnailMaxRes;
+
+    private $videoUrl;
+
+    private $channelUrl;
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function createUrl() {
+        $this->videoUrl = "https://www.youtube.com/watch?v=" . $this->videoId;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function createChannelUrl() {
+        $this->channelUrl = "https://www.youtube.com/channel/" . $this->channelId;
+    }
+
+    /**
+     * Get videoUrl
+     *
+     * @return string
+     */
+    public function getVideoUrl()
+    {
+        return $this->videoUrl;
+    }
+
+    /**
+     * Get channelUrl
+     *
+     * @return string
+     */
+    public function getChannelUrl()
+    {
+        return $this->channelUrl;
+    }
 
     /**
      * @var \DateTime
@@ -80,12 +149,11 @@ class Video
     private $submissionDate;
 
     /**
-     * @var bool
+     * @var boolean
      *
-     * @ORM\Column(name="submission_validate", type="boolean")
+     * @ORM\Column(name="submission", type="boolean")
      */
-    private $submissionValidate;
-
+    private $submission;
 
     /**
      * Get id
@@ -95,6 +163,136 @@ class Video
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set submissionDate
+     *
+     * @param \DateTime $submissionDate
+     *
+     * @return Video
+     */
+    public function setSubmissionDate($submissionDate)
+    {
+        $this->submissionDate = $submissionDate;
+
+        return $this;
+    }
+
+    /**
+     * Get submissionDate
+     *
+     * @return \DateTime
+     */
+    public function getSubmissionDate()
+    {
+        return $this->submissionDate;
+    }
+
+    /**
+     * Add broadcast
+     *
+     * @param \DuckTV\AppBundle\Entity\Broadcast $broadcast
+     *
+     * @return Video
+     */
+    public function addBroadcast(\DuckTV\AppBundle\Entity\Broadcast $broadcast)
+    {
+        $this->broadcasts[] = $broadcast;
+
+        return $this;
+    }
+
+    /**
+     * Remove broadcast
+     *
+     * @param \DuckTV\AppBundle\Entity\Broadcast $broadcast
+     */
+    public function removeBroadcast(\DuckTV\AppBundle\Entity\Broadcast $broadcast)
+    {
+        $this->broadcasts->removeElement($broadcast);
+    }
+
+    /**
+     * Get broadcasts
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getBroadcasts()
+    {
+        return $this->broadcasts;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \DuckTV\AppBundle\Entity\User $user
+     *
+     * @return Video
+     */
+    public function setUser(\DuckTV\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \DuckTV\AppBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set category
+     *
+     * @param \DuckTV\AppBundle\Entity\Category $category
+     *
+     * @return Video
+     */
+    public function setCategory(\DuckTV\AppBundle\Entity\Category $category)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get category
+     *
+     * @return \DuckTV\AppBundle\Entity\Category
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * Set videoId
+     *
+     * @param string $videoId
+     *
+     * @return Video
+     */
+    public function setVideoId($videoId)
+    {
+        $this->videoId = $videoId;
+
+        return $this;
+    }
+
+    /**
+     * Get videoId
+     *
+     * @return string
+     */
+    public function getVideoId()
+    {
+        return $this->videoId;
     }
 
     /**
@@ -138,7 +336,7 @@ class Video
     /**
      * Get duration
      *
-     * @return int
+     * @return integer
      */
     public function getDuration()
     {
@@ -146,122 +344,146 @@ class Video
     }
 
     /**
-     * Set url
+     * Set channelId
      *
-     * @param string $url
+     * @param string $channelId
      *
      * @return Video
      */
-    public function setUrl($url)
+    public function setChannelId($channelId)
     {
-        $this->url = $url;
+        $this->channelId = $channelId;
 
         return $this;
     }
 
     /**
-     * Get url
+     * Get channelId
      *
      * @return string
      */
-    public function getUrl()
+    public function getChannelId()
     {
-        return $this->url;
+        return $this->channelId;
     }
 
     /**
-     * Set channel
+     * Set channelTitle
      *
-     * @param string $channel
+     * @param string $channelTitle
      *
      * @return Video
      */
-    public function setChannel($channel)
+    public function setChannelTitle($channelTitle)
     {
-        $this->channel = $channel;
+        $this->channelTitle = $channelTitle;
 
         return $this;
     }
 
     /**
-     * Get channel
+     * Get channelTitle
      *
      * @return string
      */
-    public function getChannel()
+    public function getChannelTitle()
     {
-        return $this->channel;
+        return $this->channelTitle;
     }
 
     /**
-     * Set thumbnail
+     * Set description
      *
-     * @param string $thumbnail
+     * @param string $description
      *
      * @return Video
      */
-    public function setThumbnail($thumbnail)
+    public function setDescription($description)
     {
-        $this->thumbnail = $thumbnail;
+        $this->description = $description;
 
         return $this;
     }
 
     /**
-     * Get thumbnail
+     * Get description
      *
      * @return string
      */
-    public function getThumbnail()
+    public function getDescription()
     {
-        return $this->thumbnail;
+        return $this->description;
     }
 
     /**
-     * Set submissionDate
+     * Set thumbnailStandard
      *
-     * @param \DateTime $submissionDate
+     * @param string $thumbnailStandard
      *
      * @return Video
      */
-    public function setSubmissionDate($submissionDate)
+    public function setThumbnailStandard($thumbnailStandard)
     {
-        $this->submissionDate = $submissionDate;
+        $this->thumbnailStandard = $thumbnailStandard;
 
         return $this;
     }
 
     /**
-     * Get submissionDate
+     * Get thumbnailStandard
      *
-     * @return \DateTime
+     * @return string
      */
-    public function getSubmissionDate()
+    public function getThumbnailStandard()
     {
-        return $this->submissionDate;
+        return $this->thumbnailStandard;
     }
 
     /**
-     * Set submissionValidate
+     * Set thumbnailMaxRes
      *
-     * @param boolean $submissionValidate
+     * @param string $thumbnailMaxRes
      *
      * @return Video
      */
-    public function setSubmissionValidate($submissionValidate)
+    public function setThumbnailMaxRes($thumbnailMaxRes)
     {
-        $this->submissionValidate = $submissionValidate;
+        $this->thumbnailMaxRes = $thumbnailMaxRes;
 
         return $this;
     }
 
     /**
-     * Get submissionValidate
+     * Get thumbnailMaxRes
      *
-     * @return bool
+     * @return string
      */
-    public function getSubmissionValidate()
+    public function getThumbnailMaxRes()
     {
-        return $this->submissionValidate;
+        return $this->thumbnailMaxRes;
+    }
+
+    /**
+     * Set submission
+     *
+     * @param boolean $submission
+     *
+     * @return Video
+     */
+    public function setSubmission($submission)
+    {
+        $this->submission = $submission;
+
+        return $this;
+    }
+
+    /**
+     * Get submission
+     *
+     * @return boolean
+     */
+    public function getSubmission()
+    {
+        return $this->submission;
     }
 }

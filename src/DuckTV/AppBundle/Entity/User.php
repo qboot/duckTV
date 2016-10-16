@@ -13,6 +13,14 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->videos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
      * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Video", mappedBy="user")
      */
     private $videos;
@@ -221,13 +229,6 @@ class User
     public function getMail()
     {
         return $this->mail;
-    }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->videos = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**

@@ -1,0 +1,142 @@
+{% extends 'DuckTVAppBundle::layout.html.twig' %}
+
+{% block title %}{{ parent() }} - Vidéo : {{ video.title }}{% endblock %}
+
+{% block body %}
+    <h1>Video : {{ video.title }}</h1>
+
+    {#
+        <img src="{{ video.thumbnailStandard }}" alt="standard" />
+        <img src="{{ video.thumbnailMaxRes }}" alt="maxres" />
+    #}
+
+    <div>
+        {{ video.description }}
+    </div>
+
+    <p>{{ video.submissionDate|date() }}</p>
+
+    <p>{{ video.duration }}</p>
+
+    <a href="{{ video.channelUrl }}">{{ video.channelTitle }}</a>
+
+    <div id="player"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script>
+        // 2. This code loads the IFrame Player API code asynchronously.
+        var tag = document.createElement('script');
+
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // 2bis. Mettre en pleine page
+
+        var winWidth = $(window).width();
+        //alert(winWidth);
+        var winHeight = $(window).height();
+
+
+        // 3. This function creates an <iframe> (and YouTube player)
+        //    after the API code downloads.
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: 480, //winHeight
+                width: 640, //winWidth
+                videoId: '{{ video.videoId }}',
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        // 4. The API will call this function when the video player is ready.
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        // 5. The API calls this function when the player's state changes.
+        //    The function indicates that when playing a video (state=1),
+        //    the player should play for six seconds and then stop.
+        var done = false;
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING && !done) {
+                setTimeout(stopVideo, 6000);
+                done = true;
+            }
+        }
+        function stopVideo() {
+            player.stopVideo();
+        }
+
+
+        // 6. Code perso
+
+        // charger une vidéo
+        setTimeout(function(){
+            player.loadVideoById({'videoId': 'bHQqvYy5KYo',
+                'startSeconds': 5,
+                'endSeconds': 60,
+                'suggestedQuality': 'hd1080'});
+        },10000);
+
+        setTimeout(function(){
+            player.pauseVideo();
+        },16000);
+
+        setTimeout(function(){
+            player.playVideo();
+        },20000);
+
+        // player.stopVideo();
+        // player.seekTo(seconds, allowSeekAhead)
+        // player.clearVideo();
+        // player.nextVideo();
+        // player.previousVideo();
+        // player.playVideoAt(index);
+
+        // mettre une vidéo en file d'attente
+        /*player.cueVideoById({videoId:String,
+         startSeconds:Number,
+         endSeconds:Number,
+         suggestedQuality:String});*/
+
+        // récupérer la durée d'une vidéo
+        alert(player.getDuration());
+
+    </script>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ video.id }}</td>
+            </tr>
+            <tr>
+                <th>Videoid</th>
+                <td>{{ video.videoId }}</td>
+            </tr>
+            <tr>
+                <th>Submissiondate</th>
+                <td>{% if video.submissionDate %}{{ video.submissionDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('video_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('video_edit', { 'id': video.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

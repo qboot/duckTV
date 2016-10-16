@@ -1,0 +1,7 @@
+duck_tv_app_video:
+    resource: "@DuckTVAppBundle/Resources/config/routing/video.yml"
+    prefix:   /video
+
+duck_tv_app_category:
+    resource: "@DuckTVAppBundle/Resources/config/routing/category.yml"
+    prefix:   /category
