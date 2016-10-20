@@ -2,7 +2,11 @@ duck_tv_app_admin:
     resource: "@DuckTVAppBundle/Resources/config/routing/admin.yml"
     prefix:   /admin
 
-ducktv_app_home:
+duck_tv_app_home:
     path:     /
     defaults:
-        _controller: DuckTVAppBundle:Main:index
+        _controller: DuckTVAppBundle:FrontApp:index
+
+# FOSUserBundle : les routes sont encore à personnaliser
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"

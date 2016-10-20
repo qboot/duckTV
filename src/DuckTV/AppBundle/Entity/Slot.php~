@@ -264,4 +264,11 @@ class Slot
     {
         return $this->name;
     }
+
+    /**
+     * Get slot for form
+     */
+    public function getSelectTitle() {
+        return $this->name . " " . $this->beginning->format('Y-m-d H:i:s');
+    }
 }

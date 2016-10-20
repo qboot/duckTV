@@ -1,24 +1,24 @@
-category_index:
+duck_tv_app_category_index:
     path:     /
     defaults: { _controller: "DuckTVAppBundle:Category:index" }
     methods:  GET
 
-category_show:
-    path:     /{id}/show
+duck_tv_app_category_show:
+    path:     /{slug}/afficher
     defaults: { _controller: "DuckTVAppBundle:Category:show" }
     methods:  GET
 
-category_new:
-    path:     /new
+duck_tv_app_category_new:
+    path:     /ajouter
     defaults: { _controller: "DuckTVAppBundle:Category:new" }
     methods:  [GET, POST]
 
-category_edit:
-    path:     /{id}/edit
+duck_tv_app_category_edit:
+    path:     /{slug}/editer
     defaults: { _controller: "DuckTVAppBundle:Category:edit" }
     methods:  [GET, POST]
 
-category_delete:
-    path:     /{id}/delete
+duck_tv_app_category_delete:
+    path:     /{slug}/supprimer
     defaults: { _controller: "DuckTVAppBundle:Category:delete" }
     methods:  DELETE

@@ -4,4 +4,17 @@ duck_tv_app_video:
 
 duck_tv_app_category:
     resource: "@DuckTVAppBundle/Resources/config/routing/category.yml"
-    prefix:   /category
+    prefix:   /categorie
+
+duck_tv_app_broadcast:
+    resource: "@DuckTVAppBundle/Resources/config/routing/broadcast.yml"
+    prefix:   /diffusion
+
+duck_tv_app_grid:
+    resource: "@DuckTVAppBundle/Resources/config/routing/grid.yml"
+    prefix:   /grille
+
+duck_tv_app_admin_home:
+    path:     /
+    defaults:
+        _controller: DuckTVAppBundle:Admin:index

@@ -42,9 +42,9 @@ class VideoController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($video);
-            $em->flush($video);
+            $em->flush();
 
-            return $this->redirectToRoute('video_show', array('id' => $video->getId()));
+            return $this->redirectToRoute('duck_tv_app_video_show', array('slug' => $video->getSlug()));
         }
 
         return $this->render('DuckTVAppBundle:Video:new.html.twig', array(
@@ -80,10 +80,10 @@ class VideoController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('video_edit', array('id' => $video->getId()));
+            return $this->redirectToRoute('duck_tv_app_video_show', array('slug' => $video->getSlug()));
         }
 
-        return $this->render('video/edit.html.twig', array(
+        return $this->render('DuckTVAppBundle:Video:edit.html.twig', array(
             'video' => $video,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
@@ -102,10 +102,10 @@ class VideoController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($video);
-            $em->flush($video);
+            $em->flush();
         }
 
-        return $this->redirectToRoute('video_index');
+        return $this->redirectToRoute('duck_tv_app_video_index');
     }
 
     /**
@@ -118,7 +118,7 @@ class VideoController extends Controller
     private function createDeleteForm(Video $video)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('video_delete', array('id' => $video->getId())))
+            ->setAction($this->generateUrl('duck_tv_app_video_delete', array('slug' => $video->getSlug())))
             ->setMethod('DELETE')
             ->getForm()
         ;

@@ -17,16 +17,16 @@
         <tbody>
         {% for video in videos %}
             <tr>
-                <td><a href="{{ path('video_show', { 'id': video.id }) }}">{{ video.id }}</a></td>
+                <td><a href="{{ path('duck_tv_app_video_show', { 'slug': video.slug }) }}">{{ video.id }}</a></td>
                 <td>{{ video.videoId }}</td>
                 <td>{% if video.submissionDate %}{{ video.submissionDate|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('video_show', { 'id': video.id }) }}">show</a>
+                            <a href="{{ path('duck_tv_app_video_show', { 'slug': video.slug }) }}">show</a>
                         </li>
                         <li>
-                            <a href="{{ path('video_edit', { 'id': video.id }) }}">edit</a>
+                            <a href="{{ path('duck_tv_app_video_edit', { 'slug': video.slug }) }}">edit</a>
                         </li>
                     </ul>
                 </td>
@@ -37,7 +37,7 @@
 
     <ul>
         <li>
-            <a href="{{ path('video_new') }}">Create a new video</a>
+            <a href="{{ path('duck_tv_app_video_new') }}">Create a new video</a>
         </li>
     </ul>
 {% endblock %}

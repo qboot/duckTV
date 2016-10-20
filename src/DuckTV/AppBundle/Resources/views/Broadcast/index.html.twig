@@ -3,28 +3,28 @@
 {% block title %}{{ parent() }} - Liste des catégories{% endblock %}
 
 {% block body %}
-    <h1>Liste des catégories</h1>
+    <h1>Broadcasts list</h1>
 
     <table>
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Nom</th>
+                <th>Position</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for category in categories %}
+        {% for broadcast in broadcasts %}
             <tr>
-                <td><a href="{{ path('duck_tv_app_category_show', { 'slug': category.slug }) }}">{{ loop.index }}</a></td>
-                <td>{{ category.name }}</td>
+                <td><a href="{{ path('duck_tv_app_broadcast_show', { 'id': broadcast.id }) }}">{{ broadcast.id }}</a></td>
+                <td>{{ broadcast.position }}</td>
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('duck_tv_app_category_show', { 'slug': category.slug }) }}">Voir</a>
+                            <a href="{{ path('duck_tv_app_broadcast_show', { 'id': broadcast.id }) }}">show</a>
                         </li>
                         <li>
-                            <a href="{{ path('duck_tv_app_category_edit', { 'slug': category.slug }) }}">Éditer</a>
+                            <a href="{{ path('duck_tv_app_broadcast_edit', { 'id': broadcast.id }) }}">edit</a>
                         </li>
                     </ul>
                 </td>
@@ -35,7 +35,7 @@
 
     <ul>
         <li>
-            <a href="{{ path('duck_tv_app_category_new') }}">Créer une nouvelle catégorie</a>
+            <a href="{{ path('duck_tv_app_broadcast_new') }}">Create a new broadcast</a>
         </li>
     </ul>
 {% endblock %}

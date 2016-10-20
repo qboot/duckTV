@@ -1,0 +1,28 @@
+{% extends 'DuckTVAppBundle::layout.html.twig' %}
+
+{% block title %}{{ parent() }} - Grille{% endblock %}
+
+{% block body %}
+    <h1>Grille</h1>
+
+    <table>
+        <tr>
+            {% for jour in jours %}
+                <th>{{ jour.day }} ({{ jour.date|date }})</th>
+            {% endfor %}
+        </tr>
+
+    </table>
+
+    {% for jour in jours %}
+        {{ jour.day }} ({{ jour.date|date }})
+        SLOTS:<br/>
+        {% for slot in jour.slots %}
+            {{ slot.name }}<br/>
+            VIDEOS:<br/>
+            {% for broadcast in slot.broadcasts %}
+                {{ broadcast.video.title }}<br/>
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

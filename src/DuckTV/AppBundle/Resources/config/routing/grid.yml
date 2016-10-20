@@ -1,0 +1,14 @@
+ducktv_app_default_grid:
+    path:     /defaut
+    defaults:
+        _controller: DuckTVAppBundle:Grid:default
+
+ducktv_app_current_grid:
+    path:     /actuelle
+    defaults:
+        _controller: DuckTVAppBundle:Grid:current
+
+ducktv_app_next_grid:
+    path:     /prochaine
+    defaults:
+        _controller: DuckTVAppBundle:Grid:next

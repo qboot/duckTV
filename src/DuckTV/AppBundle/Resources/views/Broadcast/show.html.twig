@@ -1,0 +1,34 @@
+{% extends 'DuckTVAppBundle::layout.html.twig' %}
+
+{% block title %}{{ parent() }} - Diffusion : {{ broadcast.id }}{% endblock %}
+
+{% block body %}
+    <h1>Broadcast</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ broadcast.id }}</td>
+            </tr>
+            <tr>
+                <th>Position</th>
+                <td>{{ broadcast.position }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('duck_tv_app_broadcast_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('duck_tv_app_broadcast_edit', { 'id': broadcast.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

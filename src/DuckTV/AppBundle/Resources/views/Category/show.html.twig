@@ -5,6 +5,10 @@
 {% block body %}
     <h1>Catégorie : {{ category.name }}</h1>
 
+    {% for video in category.videos %}
+        {{ video.title }}<br/>
+    {% endfor %}
+
     <table>
         <tbody>
             <tr>
@@ -16,15 +20,19 @@
 
     <ul>
         <li>
-            <a href="{{ path('category_index') }}">Retour à la liste</a>
+            <a href="{{ path('duck_tv_app_category_index') }}">Retour à la liste</a>
         </li>
         <li>
-            <a href="{{ path('category_edit', { 'id': category.id }) }}">Éditer</a>
+            <a href="{{ path('duck_tv_app_category_edit', { 'slug': category.slug }) }}">Éditer</a>
         </li>
         <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Supprimer">
-            {{ form_end(delete_form) }}
+            {% if delete_form is defined %}
+                {{ form_start(delete_form) }}
+                    <input type="submit" value="Supprimer">
+                {{ form_end(delete_form) }}
+            {% else %}
+                Merci de supprimer d'abord les vidéos liées à cette catégorie!
+            {% endif %}
         </li>
     </ul>
 {% endblock %}

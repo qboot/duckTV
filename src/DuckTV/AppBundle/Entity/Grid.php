@@ -22,12 +22,12 @@ class Grid
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Slot", mappedBy="day")
+     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Slot", mappedBy="grid")
      */
     private $slots;
 
     /**
-     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Transition", mappedBy="day")
+     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Transition", mappedBy="grid")
      */
     private $transitions;
 

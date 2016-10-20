@@ -3,6 +3,8 @@
 namespace DuckTV\AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use FOS\UserBundle\Model\User as BaseUser;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * User
@@ -10,14 +12,22 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="DuckTV\AppBundle\Repository\UserRepository")
  */
-class User
+class User extends BaseUser
 {
+    /**
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->videos = new \Doctrine\Common\Collections\ArrayCollection();
+        parent::__construct();
+        $this->videos = new ArrayCollection();
     }
 
     /**
@@ -26,65 +36,82 @@ class User
     private $videos;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="first_name", type="string", length=255)
-     */
-    private $firstName;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255)
-     */
-    private $name;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=255)
-     */
-    private $password;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="avatar", type="string", length=255)
+     * @ORM\Column(name="avatar", type="string", length=255, nullable=true)
      */
     private $avatar;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="role", type="string", length=255)
+     * @ORM\Column(name="first_name", type="string", length=255, nullable=true)
      */
-    private $role;
+    private $firstName;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="mail", type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
-    private $mail;
-
+    private $name;
 
     /**
-     * Get id
+     * Set avatar
      *
-     * @return int
+     * @param string $avatar
+     *
+     * @return User
      */
-    public function getId()
+    public function setAvatar($avatar)
     {
-        return $this->id;
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * Get avatar
+     *
+     * @return string
+     */
+    public function getAvatar()
+    {
+        return $this->avatar;
+    }
+
+    /**
+     * Add video
+     *
+     * @param \DuckTV\AppBundle\Entity\Video $video
+     *
+     * @return User
+     */
+    public function addVideo(\DuckTV\AppBundle\Entity\Video $video)
+    {
+        $this->videos[] = $video;
+
+        return $this;
+    }
+
+    /**
+     * Remove video
+     *
+     * @param \DuckTV\AppBundle\Entity\Video $video
+     */
+    public function removeVideo(\DuckTV\AppBundle\Entity\Video $video)
+    {
+        $this->videos->removeElement($video);
+    }
+
+    /**
+     * Get videos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getVideos()
+    {
+        return $this->videos;
     }
 
     /**
@@ -133,135 +160,5 @@ class User
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return User
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Set avatar
-     *
-     * @param string $avatar
-     *
-     * @return User
-     */
-    public function setAvatar($avatar)
-    {
-        $this->avatar = $avatar;
-
-        return $this;
-    }
-
-    /**
-     * Get avatar
-     *
-     * @return string
-     */
-    public function getAvatar()
-    {
-        return $this->avatar;
-    }
-
-    /**
-     * Set role
-     *
-     * @param string $role
-     *
-     * @return User
-     */
-    public function setRole($role)
-    {
-        $this->role = $role;
-
-        return $this;
-    }
-
-    /**
-     * Get role
-     *
-     * @return string
-     */
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    /**
-     * Set mail
-     *
-     * @param string $mail
-     *
-     * @return User
-     */
-    public function setMail($mail)
-    {
-        $this->mail = $mail;
-
-        return $this;
-    }
-
-    /**
-     * Get mail
-     *
-     * @return string
-     */
-    public function getMail()
-    {
-        return $this->mail;
-    }
-
-    /**
-     * Add video
-     *
-     * @param \DuckTV\AppBundle\Entity\Video $video
-     *
-     * @return User
-     */
-    public function addVideo(\DuckTV\AppBundle\Entity\Video $video)
-    {
-        $this->videos[] = $video;
-
-        return $this;
-    }
-
-    /**
-     * Remove video
-     *
-     * @param \DuckTV\AppBundle\Entity\Video $video
-     */
-    public function removeVideo(\DuckTV\AppBundle\Entity\Video $video)
-    {
-        $this->videos->removeElement($video);
-    }
-
-    /**
-     * Get videos
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getVideos()
-    {
-        return $this->videos;
     }
 }
