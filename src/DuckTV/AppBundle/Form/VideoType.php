@@ -5,7 +5,7 @@ namespace DuckTV\AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class VideoType extends AbstractType
@@ -16,7 +16,7 @@ class VideoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('videoId', TextType::class)
+            ->add('videoUrl', UrlType::class)
             ->add('category', EntityType::class, array(
                 'class' => 'DuckTVAppBundle:Category',
                 'choice_label'  => 'name',

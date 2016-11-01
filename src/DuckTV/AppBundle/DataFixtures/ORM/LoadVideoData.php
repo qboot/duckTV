@@ -12,14 +12,15 @@ class LoadVideoData extends AbstractFixture implements OrderedFixtureInterface {
     public function load(ObjectManager $manager) {
 
         $videos = array(
-                "KQS0KILDZ34",
-                "nPd4lpqCZ_M",
+            "https://www.youtube.com/watch?v=KQS0KILDZ34",
+            "https://www.youtube.com/watch?v=nPd4lpqCZ_M",
+            "https://www.youtube.com/watch?v=-3w085aMHRE",
         );
 
         for($i=0;$i<count($videos);$i++) {
             $video = new Video();
 
-            $video->setVideoId($videos[$i]);
+            $video->setVideoUrl($videos[$i]);
             $video->setCategory($this->getReference("defaut"));
             $video->setSubmissionDate(new \DateTime());
             $video->setUser($this->getReference("admin"));

@@ -5,8 +5,6 @@
 {% block body %}
     <h1>Grille par défaut</h1>
 
-    <form method="post" action="{{ path('duck_tv_app_grid_update') }}">
-
     <table border="1" style="opacity:0">
                 <tr>
                     <th></th>
@@ -17,61 +15,60 @@
                     <th>14h - 15h30</th>
                     <th>15h30 - 17h</th>
                     <th>17h - 18h30</th>
-                    <th></th>
                 </tr>
-
             {% for jour in jours %}
                 <tr>
                     <th>{{ jour.day }} ({{ jour.date|date }})</th>
                     {% for slot in jour.slots %}
+
                         <td>
                             {% if slot.broadcasts is not empty %}
                                 <ul class="sortable">
-                                    {% for broadcast in slot.broadcasts | sortbyfield('position') %}
+                                    {% for broadcast in slot.broadcasts %}
                                         <li>
-                                            <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][id]" value="{{ broadcast.id }}" />
-                                            <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][position]" class="positionInput" value="{{ broadcast.position }}" />
+                                            <input type="text" name="position" class="positionInput" value="{{ broadcast.position }}" />
+                                            [{{ broadcast.position }}] {{ broadcast.video.title }} - {{ broadcast.video.duration }}s<br/>
 
-                                            {{ broadcast.video.title }} - {{ broadcast.video.duration }}s<br/>
+                                            {{ form_start(delete_form) }}
+                                                <input type="hidden" value="{{ broadcast.id }}" name="id" />
+                                                <input type="submit" value="Supprimer">
+                                            {{ form_end(delete_form) }}
 
-                                            <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][delete]" value="Supprimer">
-
-                                            <input type="url" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][url]" placeholder="url vidéo" value="{{ broadcast.video.videoUrl }}" />
-                                            <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][update]" value="Éditer">
+                                            <form action="{{ path('duck_tv_app_grid_edit_cast') }}" method="post">
+                                                <input type="url" name="url" placeholder="url vidéo" value="{{ broadcast.video.videoUrl }}" required />
+                                                <input type="hidden" value="{{ broadcast.id }}" name="id" />
+                                                <input type="submit" value="Éditer">
+                                            </form>
                                         </li>
                                     {% endfor %}
                                 </ul>
                             {% endif %}
 
-                            <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][id]" value="{{ slot.id }}" />
+                            <form action="{{ path('duck_tv_app_grid_new_cast') }}" method="post" id="form-{{ slot.id }}">
+                                <input type="url" name="url" placeholder="url vidéo" required />
+                                <select name="category">
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="hidden" name="id" value="{{ slot.id }}" />
+                            </form>
 
-                            <input type="url" name="grid[{{ jour.id }}][{{ slot.id }}][url]" placeholder="url vidéo" />
-                            <select name="grid[{{ jour.id }}][{{ slot.id }}][category]">
-                                {% for category in categories %}
-                                    <option value="{{ category.id }}">{{ category.name }}</option>
-                                {% endfor %}
-                            </select>
+                            <a href="#" id="{{ slot.id }}">Ajouter</a>
 
-
-                            <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][add]" value="Ajouter" />
-
-                            <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][update]" value="Mettre à jour" />
+                            <script>
+                                $("#{{ slot.id }}").click(function(e) {
+                                    e.preventDefault();
+                                    var form = "form-{{ slot.id }}";
+                                    $("#"+form).submit();
+                                });
+                            </script>
                         </td>
                     {% endfor %}
-
-                    <td>
-                        <input type="hidden" name="grid[{{ jour.id }}][id]" value="{{ jour.id }}" />
-
-                        <input type="submit" name="grid[{{ jour.id }}][update]" value="Mettre à jour" />
-                    </td>
                 </tr>
             {% endfor %}
+
     </table>
-
-        <input type="submit" name="grid[update]" value="Mettre à jour" />
-
-    </form>
-
     <script>
         // fonction pour inverser les lignes et les colonnes d'un tableau
         $("table").each(function () {

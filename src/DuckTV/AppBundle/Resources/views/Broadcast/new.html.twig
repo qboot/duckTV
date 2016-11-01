@@ -3,16 +3,17 @@
 {% block title %}{{ parent() }} - Ajouter une catégorie{% endblock %}
 
 {% block body %}
-    <h1>Broadcast creation</h1>
+    <h1>Ajouter une diffusion</h1>
 
     {{ form_start(form) }}
         {{ form_widget(form) }}
-        <input type="submit" value="Create" />
+        <input type="hidden" name="id" value="{{ slot.id }}" />
+        <input type="submit" value="Créer" />
     {{ form_end(form) }}
 
     <ul>
         <li>
-            <a href="{{ path('duck_tv_app_broadcast_index') }}">Back to the list</a>
+            <a href="{{ path('duck_tv_app_broadcast_index') }}">Retour à la liste</a>
         </li>
     </ul>
 {% endblock %}

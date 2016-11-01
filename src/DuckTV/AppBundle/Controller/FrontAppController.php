@@ -9,6 +9,7 @@ class FrontAppController extends Controller
 {
     public function indexAction() {
 
+
         return $this->render('DuckTVAppBundle:FrontApp:index.html.twig');
 
     }

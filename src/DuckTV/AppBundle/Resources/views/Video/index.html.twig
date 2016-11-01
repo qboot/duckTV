@@ -9,8 +9,8 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Videoid</th>
-                <th>Submissiondate</th>
+                <th>ID Vidéo</th>
+                <th>Date de soumission</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -23,10 +23,10 @@
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('duck_tv_app_video_show', { 'slug': video.slug }) }}">show</a>
+                            <a href="{{ path('duck_tv_app_video_show', { 'slug': video.slug }) }}">afficher</a>
                         </li>
                         <li>
-                            <a href="{{ path('duck_tv_app_video_edit', { 'slug': video.slug }) }}">edit</a>
+                            <a href="{{ path('duck_tv_app_video_edit', { 'slug': video.slug }) }}">éditer</a>
                         </li>
                     </ul>
                 </td>
@@ -37,7 +37,7 @@
 
     <ul>
         <li>
-            <a href="{{ path('duck_tv_app_video_new') }}">Create a new video</a>
+            <a href="{{ path('duck_tv_app_video_new') }}">Créer une nouvelle vidéo</a>
         </li>
     </ul>
 {% endblock %}

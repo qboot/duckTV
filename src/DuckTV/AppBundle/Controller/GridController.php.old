@@ -1,0 +1,114 @@
+<?php
+
+namespace DuckTV\AppBundle\Controller;
+
+use DuckTV\AppBundle\Entity\Broadcast;
+use DuckTV\AppBundle\Entity\Video;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class GridController extends Controller
+{
+    public function defaultAction() {
+
+        // entity manager
+        $em = $this->getDoctrine()->getManager();
+
+        // récupérer tous les jours de la semaine par défaut
+        $jours = $em->getRepository('DuckTVAppBundle:Grid')->findBy(
+            array('weekNumber' => 0)
+        );
+
+        // faciliter le dev front
+        // Problème : on a un tableau d'obj = jour
+        // si on boucle on a jour puis slot puis videos puis jour suivant etc...
+        /*$grid = [];
+        foreach($jours as $jour) {
+            foreach($jour->getSlots() as $slot) {
+                if(!empty($slot->getBroadcasts())) {
+                    foreach($slot->getBroadcasts() as $broadcast) {
+                        $grid[$slot->getName()][] = $broadcast->getVideo()->getTitle();
+                    }
+                } else {
+                    $grid[$slot->getName()][] = "empty";
+                }
+            }
+        }
+
+        dump($grid);
+        die();*/
+
+        return $this->render('DuckTVAppBundle:Grid:default.html.twig', array(
+            'jours' => $jours,
+        ));
+    }
+
+    public function newCastAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+
+        $id = $request->request->get('id');
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        if($id == "") {
+            return $this->redirectToRoute('duck_tv_app_default_grid');
+        }
+
+        $slot = $em->getRepository("DuckTVAppBundle:Slot")->find($id);
+        $position = count($slot->getBroadcasts())+1;
+
+        $video = new Video();
+        $form = $this->createForm('DuckTV\AppBundle\Form\VideoType', $video);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // on teste si cette vidéo existe déjà dans notre bdd
+
+                // pour cela on récup l'url de la vidéo
+                $videoUrl = $video->getVideoUrl();
+
+                // puis le service pour convertir url -> id
+                $urlToId = $this->container->get('duck_tv_app.video_url_to_video_id');
+
+                // puis l'existence en bdd
+                $videoIsset = $em->getRepository('DuckTVAppBundle:Video')->findBy(
+                    array('videoId' => $urlToId->VideoUrlToVideoId($videoUrl))
+                );
+
+                if($videoIsset != array()) {
+                    // la vidéo existe déjà
+                    // on crée la diffusion et on redirige sur la grille
+                    $broadcast = new Broadcast();
+                    $broadcast->setSlot($slot);
+                    $broadcast->setPosition($position);
+                    $broadcast->setVideo($videoIsset[0]);
+                    $em->persist($broadcast);
+                    $em->flush();
+                    return $this->redirectToRoute('duck_tv_app_default_grid');
+                }
+            // fin test
+
+            $video->setUser($user);
+            $em->persist($video);
+            $em->flush();
+
+            $broadcast = new Broadcast();
+
+            $broadcast->setSlot($slot);
+            $broadcast->setPosition($position);
+            $broadcast->setVideo($video);
+
+            $em->persist($broadcast);
+            $em->flush();
+
+            return $this->redirectToRoute('duck_tv_app_default_grid');
+        }
+
+        return $this->render('DuckTVAppBundle:Grid:newCast.html.twig', array(
+            'video' => $video,
+            'form' => $form->createView(),
+            'slot' => $slot,
+        ));
+    }
+}

@@ -33,21 +33,35 @@ class BroadcastController extends Controller
      */
     public function newAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+
+        $id = $request->request->get('id');
+
+        if($id == "") {
+            return $this->redirectToRoute('duck_tv_app_default_grid');
+        }
+
+        $slot = $em->getRepository("DuckTVAppBundle:Slot")->find($id);
+        $position = count($slot->getBroadcasts())+1;
+
         $broadcast = new Broadcast();
         $form = $this->createForm('DuckTV\AppBundle\Form\BroadcastType', $broadcast);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $broadcast->setSlot($slot);
+            $broadcast->setPosition($position);
+
             $em->persist($broadcast);
             $em->flush();
 
-            return $this->redirectToRoute('duck_tv_app_broadcast_show', array('id' => $broadcast->getId()));
+            return $this->redirectToRoute('duck_tv_app_default_grid');
         }
 
         return $this->render('DuckTVAppBundle:Broadcast:new.html.twig', array(
             'broadcast' => $broadcast,
             'form' => $form->createView(),
+            'slot' => $slot,
         ));
     }
 
@@ -94,10 +108,16 @@ class BroadcastController extends Controller
         $form = $this->createDeleteForm($broadcast);
         $form->handleRequest($request);
 
+        $slot = $broadcast->getSlot();
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($broadcast);
             $em->flush();
+
+            $updateCastsPos = $this->container->get('duck_tv_app.update_broadcasts_position');
+            $updateCastsPos->updateBroadcastsPosition($slot);
+
         }
 
         return $this->redirectToRoute('duck_tv_app_broadcast_index');

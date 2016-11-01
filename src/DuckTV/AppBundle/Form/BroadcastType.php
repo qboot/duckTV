@@ -16,18 +16,9 @@ class BroadcastType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('position', IntegerType::class)
             ->add('video', EntityType::class, array(
                 'class' => 'DuckTVAppBundle:Video',
                 'choice_label'  => 'title',
-                'multiple' => false,
-                'expanded' => false
-            ))
-            ->add('slot', EntityType::class, array(
-                'class' => 'DuckTVAppBundle:Slot',
-                'choice_label' => function($slot) {
-                    return $slot->getSelectTitle();
-                },
                 'multiple' => false,
                 'expanded' => false
             ))

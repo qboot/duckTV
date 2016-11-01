@@ -1,0 +1,29 @@
+{% extends 'DuckTVAppBundle::layout.html.twig' %}
+
+{% block title %}{{ parent() }} - Ajouter une vidéo{% endblock %}
+
+{% block body %}
+    <h1>Ajouter un programme</h1>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <input type="hidden" name="id" value="{{ slot.id }}" />
+    <input type="submit" id="create" value="Créer" />
+    {{ form_end(form) }}
+
+    <ul>
+        <li>
+            <a href="{{ path('duck_tv_app_video_index') }}">Retour à la liste</a>
+        </li>
+    </ul>
+
+    <script>
+        var clic = 0;
+        $('#create').click(function(){
+            if(clic >= 1) {
+                $(this).attr('disabled','disabled');
+            }
+            clic++;
+        });
+    </script>
+{% endblock %}

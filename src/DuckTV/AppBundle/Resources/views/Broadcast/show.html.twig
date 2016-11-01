@@ -3,7 +3,7 @@
 {% block title %}{{ parent() }} - Diffusion : {{ broadcast.id }}{% endblock %}
 
 {% block body %}
-    <h1>Broadcast</h1>
+    <h1>Diffusion</h1>
 
     <table>
         <tbody>
@@ -20,14 +20,14 @@
 
     <ul>
         <li>
-            <a href="{{ path('duck_tv_app_broadcast_index') }}">Back to the list</a>
+            <a href="{{ path('duck_tv_app_broadcast_index') }}">Retour à la liste</a>
         </li>
         <li>
-            <a href="{{ path('duck_tv_app_broadcast_edit', { 'id': broadcast.id }) }}">Edit</a>
+            <a href="{{ path('duck_tv_app_broadcast_edit', { 'id': broadcast.id }) }}">Éditer</a>
         </li>
         <li>
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+                <input type="submit" value="Supprimer">
             {{ form_end(delete_form) }}
         </li>
     </ul>

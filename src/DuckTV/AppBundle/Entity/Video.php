@@ -99,14 +99,21 @@ class Video
     /**
      * @var string
      *
-     * @ORM\Column(name="thumbnail_standard", type="string", length=255)
+     * @ORM\Column(name="thumbnail", type="string", length=255)
+     */
+    private $thumbnail;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="thumbnail_standard", type="string", length=255, nullable=true)
      */
     private $thumbnailStandard;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="thumbnail_maxres", type="string", length=255)
+     * @ORM\Column(name="thumbnail_maxres", type="string", length=255, nullable=true)
      */
     private $thumbnailMaxRes;
 
@@ -117,7 +124,7 @@ class Video
     /**
      * @ORM\PostLoad
      */
-    public function createUrl() {
+    public function createVideoUrl() {
         $this->videoUrl = "https://www.youtube.com/watch?v=" . $this->videoId;
     }
 
@@ -136,6 +143,20 @@ class Video
     public function getVideoUrl()
     {
         return $this->videoUrl;
+    }
+
+    /**
+     * Set videoUrl
+     *
+     * @param string $videoUrl
+     *
+     * @return Video
+     */
+    public function setVideoUrl($videoUrl)
+    {
+        $this->videoUrl = $videoUrl;
+
+        return $this;
     }
 
     /**
@@ -516,5 +537,29 @@ class Video
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set thumbnail
+     *
+     * @param string $thumbnail
+     *
+     * @return Video
+     */
+    public function setThumbnail($thumbnail)
+    {
+        $this->thumbnail = $thumbnail;
+
+        return $this;
+    }
+
+    /**
+     * Get thumbnail
+     *
+     * @return string
+     */
+    public function getThumbnail()
+    {
+        return $this->thumbnail;
     }
 }

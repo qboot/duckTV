@@ -39,8 +39,11 @@ class VideoController extends Controller
         $form = $this->createForm(VideoType::class, $video);
         $form->handleRequest($request);
 
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $video->setUser($user);
             $em->persist($video);
             $em->flush();
 
@@ -99,10 +102,24 @@ class VideoController extends Controller
         $form = $this->createDeleteForm($video);
         $form->handleRequest($request);
 
+        // on trouve tous les slots rattachés à cette vidéo
+        $broadcasts = $video->getBroadcasts();
+        $tabSlots = [];
+        foreach($broadcasts as $broadcast) {
+            if(!in_array($broadcast->getSlot(), $tabSlots)) {
+                $tabSlots[] = $broadcast->getSlot();
+            }
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($video);
             $em->flush();
+
+            $updateCastsPos = $this->container->get('duck_tv_app.update_broadcasts_position');
+            foreach($tabSlots as $slot) {
+                $updateCastsPos->updateBroadcastsPosition($slot);
+            }
         }
 
         return $this->redirectToRoute('duck_tv_app_video_index');

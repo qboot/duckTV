@@ -1,14 +1,34 @@
-ducktv_app_default_grid:
+duck_tv_app_default_grid:
     path:     /defaut
     defaults:
         _controller: DuckTVAppBundle:Grid:default
 
-ducktv_app_current_grid:
+duck_tv_app_current_grid:
     path:     /actuelle
     defaults:
         _controller: DuckTVAppBundle:Grid:current
 
-ducktv_app_next_grid:
+duck_tv_app_next_grid:
     path:     /prochaine
     defaults:
         _controller: DuckTVAppBundle:Grid:next
+
+duck_tv_app_grid_new_cast:
+    path:     /defaut/diffusion
+    defaults:
+        _controller: DuckTVAppBundle:Grid:newCast
+
+duck_tv_app_grid_delete_cast:
+    path:     /defaut/diffusion/supprimer
+    defaults:
+        _controller: DuckTVAppBundle:Grid:deleteCast
+
+duck_tv_app_grid_edit_cast:
+    path:     /defaut/diffusion/editer
+    defaults:
+        _controller: DuckTVAppBundle:Grid:editCast
+
+duck_tv_app_grid_update:
+    path:     /defaut/mettre-a-jour
+    defaults:
+        _controller: DuckTVAppBundle:Grid:update

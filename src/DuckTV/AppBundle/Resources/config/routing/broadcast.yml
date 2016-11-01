@@ -10,7 +10,8 @@ duck_tv_app_broadcast_show:
 
 duck_tv_app_broadcast_new:
     path:     /ajouter
-    defaults: { _controller: "DuckTVAppBundle:Broadcast:new" }
+    defaults:
+        _controller: "DuckTVAppBundle:Broadcast:new"
     methods:  [GET, POST]
 
 duck_tv_app_broadcast_edit:

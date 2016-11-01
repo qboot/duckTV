@@ -28,10 +28,16 @@ class VideoCreationListener
 
         // logic
         $apiKey = $this->container->getParameter('api_key');
-        $videoId = $video->getVideoId();
 
-        $data = file_get_contents("https://www.googleapis.com/youtube/v3/videos?key=". $apiKey ."&part=snippet&id=". $videoId);
-        $duration = file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=". $videoId ."&part=contentDetails&key=". $apiKey);
+        $videoUrl = $video->getVideoUrl();
+
+        // function from Url -> Id Service
+        $urlToId = $this->container->get('duck_tv_app.video_url_to_video_id');
+
+        $video->setVideoId($urlToId->VideoUrlToVideoId($videoUrl));
+
+        $data = file_get_contents("https://www.googleapis.com/youtube/v3/videos?key=". $apiKey ."&part=snippet&id=". $video->getVideoId());
+        $duration = file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=". $video->getVideoId() ."&part=contentDetails&key=". $apiKey);
 
         $dataJSON = json_decode($data);
         $durationJSON = json_decode($duration);
@@ -46,9 +52,19 @@ class VideoCreationListener
         $video->setChannelId($dataJSON->items[0]->snippet->channelId);
         $video->setChannelTitle($dataJSON->items[0]->snippet->channelTitle);
 
+        // submission value
+        if($video->getUser()->hasRole('ROLE_ADMIN') || $video->getUser()->hasRole('ROLE_SUPER_ADMIN')) {
+            $video->setSubmission(false);
+        } else {
+            $video->setSubmission(true);
+        }
+
         // options : default medium high standard maxres / with : witdh, height, url
-        $video->setThumbnailStandard($dataJSON->items[0]->snippet->thumbnails->standard->url);
-        $video->setThumbnailMaxRes($dataJSON->items[0]->snippet->thumbnails->maxres->url);
+        $video->setThumbnail("http://i1.ytimg.com/vi/".$video->getVideoId()."/0.jpg");
+        if(isset($dataJSON->items[0]->snippet->thumbnails->standard))
+            $video->setThumbnailStandard($dataJSON->items[0]->snippet->thumbnails->standard->url);
+        if(isset($dataJSON->items[0]->snippet->thumbnails->maxres))
+            $video->setThumbnailMaxRes($dataJSON->items[0]->snippet->thumbnails->maxres->url);
 
     }
 }

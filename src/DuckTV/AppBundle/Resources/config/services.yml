@@ -9,5 +9,12 @@ services:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
 
+    duck_tv_app.update_broadcasts_position:
+        class: DuckTV\AppBundle\Service\UpdateBroadcastsPosition
+        arguments: ['@service_container']
+
     duck_tv_app.iso8601_to_seconds:
         class: DuckTV\AppBundle\Service\ISO8601ToSeconds
+
+    duck_tv_app.video_url_to_video_id:
+        class: DuckTV\AppBundle\Service\VideoUrlToVideoId
