@@ -27,6 +27,24 @@
                 Connecté en tant que {{ app.user.username }}
                 -
                 <a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
+
+                <div>
+                    Grilles
+                        Par défaut
+                        Semaine actuelle
+                        Semaine suivante
+                        Transitions
+                    Vidéos
+                        Liste
+                        Ajouter
+                    Catégories
+                        Liste
+                        Ajouter
+                    Documentation
+                        Guide
+                        Téléchargements
+                </div>
+
             {% else %}
                 <a href="{{ path('fos_user_security_login') }}">Connexion</a>
             {% endif %}

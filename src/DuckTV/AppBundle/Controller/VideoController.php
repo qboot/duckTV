@@ -44,6 +44,22 @@ class VideoController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $video->setUser($user);
+
+            // on teste l'url
+                // function from Url -> Id Service
+                $urlToId = $this->container->get('duck_tv_app.video_url_to_video_id');
+
+                $vidId = $urlToId->VideoUrlToVideoId($video->getVideoUrl());
+
+                // url ne provient pas de youtube on redirige
+                if($vidId === false) {
+                    return $this->render('DuckTVAppBundle:Video:new.html.twig', array(
+                        'video' => $video,
+                        'form' => $form->createView(),
+                    ));
+                }
+            // fin test
+
             $em->persist($video);
             $em->flush();
 

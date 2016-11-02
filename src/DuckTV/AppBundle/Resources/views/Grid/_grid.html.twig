@@ -1,0 +1,201 @@
+<form method="post" action="{{ path('duck_tv_app_grid_update') }}">
+    <input type="hidden" name="type" value="{{ type }}" />
+
+    <table border="1" style="opacity:0">
+        <tr>
+            <th></th>
+            <th>8h - 9h30</th>
+            <th>9h30 - 11h</th>
+            <th>11h - 12h30</th>
+            <th>12h30 - 14h</th>
+            <th>14h - 15h30</th>
+            <th>15h30 - 17h</th>
+            <th>17h - 18h30</th>
+            <th></th>
+        </tr>
+
+        {% for jour in jours %}
+            <tr>
+                <th>
+                    {% if jour.date|date("Y") == 1970 %}
+                        {{ jour.day }}
+                    {% else %}
+                        {{ jour.date|localizeddate('none', 'none', app.request.locale, "Europe/Paris", "cccc d MMMM Y") }}
+                    {% endif %}
+                </th>
+
+                {# si le jour est égal ou plus ancien à aujourd'hui alors on empêche sa modification #}
+                {# on a jusqu'au jour J 6h du matin pour modifier la grille du jour #}
+                {% if jour.date|date_modify("+6 hour")|date("Y-m-d H:i:s") <= "now"|date("Y-m-d H:i:s") and jour.date|date("Y") != 1970 %}
+                    {% set disabled = true %}
+                {% else %}
+                    {% set disabled = false %}
+                {% endif %}
+
+                {% for slot in jour.slots %}
+
+                    {% set time = 0 %}
+
+                    <td>
+                        {% if slot.broadcasts is not empty %}
+
+                            {# trouver le temps restant #}
+                            {% for broadcast in slot.broadcasts %}
+                                {% set time = time + broadcast.video.duration %}
+                            {% endfor %}
+
+                            {% set time = 82*60 - time %}
+
+                            {% if time >= 0 %}
+                                {% set hours = (time/3600)|round(0, 'floor') %}
+                                {% set minutes = ((time/60) % 60)|round(0, 'floor') %}
+                            {% else %}
+                                {% set hours = (time/3600)|round(0, 'ceil') %}
+                                {% set minutes = ((time/60) % 60)|round(0, 'ceil') %}
+                            {% endif %}
+                            {% set seconds = time % 60 %}
+                            {# fin trouver le temps restant #}
+
+                            <div class="{{ (time < 0) ? 'fullSlot' : 'emptySlot' }}">
+                                {% if time < 0 %}-{% endif %}{% if hours != 0 %}{{ hours|abs }}h {% endif %}{% if minutes != 0 %}{{ minutes|abs }}m {% endif %}{{ seconds|abs }}s
+                            </div>
+                            <ul class="sortable">
+                                {% for broadcast in slot.broadcasts | sortbyfield('position') %}
+                                    <li>
+                                        <div class="handle"></div>
+                                        <div class="toggle"></div>
+                                        <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][id]" value="{{ broadcast.id }}" />
+                                        <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][position]" class="positionInput" value="{{ broadcast.position }}" />
+
+                                        <a href="{{ path('duck_tv_app_video_show', { 'slug': broadcast.video.slug }) }}">{{ broadcast.video.title|length > 30 ? broadcast.video.title|slice(0, 30) ~ '...' : broadcast.video.title  }}</a><br/>
+
+                                        <input type="submit" class="delete-button" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][delete]" value="" {% if disabled %}disabled{% endif %}>
+
+                                        <div class="tab">
+                                            {% set duration = broadcast.video.duration %}
+                                            {% set dHours = (duration/3600)|round(0, 'floor') %}
+                                            {% set dMinutes = ((duration/60) % 60)|round(0, 'floor') %}
+                                            {% set dSeconds = duration % 60 %}
+                                            {% if dHours != 0 %}{{ dHours|abs }}h {% endif %}{% if dMinutes != 0 %}{{ dMinutes|abs }}m {% endif %}{{ dSeconds|abs }}s
+
+                                            {% if not disabled %}
+                                                <div class="wrap-droppable">
+                                                    <input type="url" onClick="this.setSelectionRange(0, this.value.length)" class="droppable" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][url]" placeholder="url vidéo" value="{{ broadcast.video.videoUrl }}" />
+                                                </div>
+                                                <input type="submit" class="edit-button" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][update]" value="" />
+                                            {% endif %}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][id]" value="{{ slot.id }}" />
+
+                        {% if time >= 0 and not disabled %}
+                            <div class="wrap-droppable">
+                                <input type="url" onClick="this.setSelectionRange(0, this.value.length)" class="droppable" name="grid[{{ jour.id }}][{{ slot.id }}][url]" placeholder="url vidéo" />
+                            </div>
+                            <select name="grid[{{ jour.id }}][{{ slot.id }}][category]">
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][add]" value="Ajouter" />
+                        {% endif %}
+
+                        {% if not disabled %}
+                            <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][update]" value="Mettre à jour" />
+                        {% endif %}
+                    </td>
+                {% endfor %}
+
+                <td>
+                    <input type="hidden" name="grid[{{ jour.id }}][id]" value="{{ jour.id }}" />
+
+                    {% if not disabled %}
+                        <input type="submit" name="grid[{{ jour.id }}][update]" value="Mettre à jour" />
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <input type="submit" name="grid[update]" value="Mettre à jour" />
+
+</form>
+
+<div>
+    {% for video in videos %}
+        <img src="{{ video.thumbnail }}" width="150" class="draggable" data-url="{{ video.videoUrl }}" />
+    {% endfor %}
+</div>
+
+
+<script>
+    // fonction pour inverser les lignes et les colonnes d'un tableau
+    $("table").each(function () {
+        var $this = $(this);
+        var newrows = [];
+        $this.find("tr").each(function () {
+            var i = 0;
+            $(this).find("td,th").each(function () {
+                i++;
+                if (newrows[i] === undefined) {
+                    newrows[i] = $("<tr></tr>");
+                }
+                newrows[i].append($(this));
+            });
+        });
+        $this.find("tr").remove();
+        $.each(newrows, function () {
+            $this.append(this);
+        });
+    });
+
+    // on joue sur l'opacité au chargement pour éviter l'effet de saut d'inversion des tr td
+    $("table").css({opacity : 1});
+</script>
+
+<script>
+    $(document).ready(function(){
+        $( ".sortable" ).sortable({
+            handle: ".handle",
+            update: function(e, ui) {
+                var list = ui.item.parent("ul");
+                var pos = 0;
+                $(list.find("li")).each(function(){
+                    pos++;
+                    $(this).find("input.positionInput").val(pos);
+                });
+            }
+        });
+        $( ".sortable" ).disableSelection();
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $(".draggable").draggable({
+            revert: "invalid",
+            cursor: "move",
+            helper: "clone",
+            cursorAt: { top: 50, left: 75 }
+        });
+
+        $(".wrap-droppable").droppable({
+            drop: function (event, ui) {
+                // ui.draggable is the jQuery object for the thing being dragged (and
+                // hence the thing being dropped).
+                $(this).children('input').val(ui.draggable.data('url'));
+                $(this).find(".url-thumbnail").remove();
+                $(this).prepend('<img src="'+ui.draggable.attr('src')+'" height="40" class="url-thumbnail" />');
+            }
+        });
+
+        $(".toggle").click(function() {
+            $(this).parent().find(".tab").slideToggle("slow");
+        });
+
+    });
+</script>

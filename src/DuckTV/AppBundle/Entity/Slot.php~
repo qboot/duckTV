@@ -23,7 +23,7 @@ class Slot
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Broadcast", mappedBy="slot")
+     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Broadcast", mappedBy="slot", fetch="EAGER")
      */
     private $broadcasts;
 

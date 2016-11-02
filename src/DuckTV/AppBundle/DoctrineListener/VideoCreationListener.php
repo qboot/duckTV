@@ -34,7 +34,10 @@ class VideoCreationListener
         // function from Url -> Id Service
         $urlToId = $this->container->get('duck_tv_app.video_url_to_video_id');
 
-        $video->setVideoId($urlToId->VideoUrlToVideoId($videoUrl));
+        $vidId = $urlToId->VideoUrlToVideoId($videoUrl);
+        // vidId est égal à faux si la chaine n'est pas valide
+
+        $video->setVideoId($vidId);
 
         $data = file_get_contents("https://www.googleapis.com/youtube/v3/videos?key=". $apiKey ."&part=snippet&id=". $video->getVideoId());
         $duration = file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=". $video->getVideoId() ."&part=contentDetails&key=". $apiKey);

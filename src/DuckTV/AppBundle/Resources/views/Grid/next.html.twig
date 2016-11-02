@@ -1,0 +1,25 @@
+{% extends 'DuckTVAppBundle::layout.html.twig' %}
+
+{% block title %}{{ parent() }} - Grille{% endblock %}
+
+{% block body %}
+    <h1>Grille de la semaine prochaine</h1>
+
+    <a class="fillGrid" href="{{ path("duck_tv_app_grid_fill") }}">Remplir la grille</a>
+
+    <script>
+        $(document).ready(function(){
+            $(".fillGrid").click(function(e){
+                e.preventDefault();
+                var rep = confirm("Êtes-vous sûr ? Cette action va écraser les éventuelles données de la grille.");
+
+                if(rep) {
+                    window.location.href = "{{ path("duck_tv_app_grid_fill") }}";
+                }
+            });
+        });
+    </script>
+
+    {{ include("DuckTVAppBundle:Grid:_grid.html.twig") }}
+
+{% endblock %}

@@ -13,22 +13,12 @@ duck_tv_app_next_grid:
     defaults:
         _controller: DuckTVAppBundle:Grid:next
 
-duck_tv_app_grid_new_cast:
-    path:     /defaut/diffusion
-    defaults:
-        _controller: DuckTVAppBundle:Grid:newCast
-
-duck_tv_app_grid_delete_cast:
-    path:     /defaut/diffusion/supprimer
-    defaults:
-        _controller: DuckTVAppBundle:Grid:deleteCast
-
-duck_tv_app_grid_edit_cast:
-    path:     /defaut/diffusion/editer
-    defaults:
-        _controller: DuckTVAppBundle:Grid:editCast
-
 duck_tv_app_grid_update:
-    path:     /defaut/mettre-a-jour
+    path:     /mettre-a-jour
     defaults:
         _controller: DuckTVAppBundle:Grid:update
+
+duck_tv_app_grid_fill:
+    path:     /remplir
+    defaults:
+        _controller: DuckTVAppBundle:Grid:fill

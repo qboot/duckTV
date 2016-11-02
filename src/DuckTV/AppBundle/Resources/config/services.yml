@@ -13,6 +13,14 @@ services:
         class: DuckTV\AppBundle\Service\UpdateBroadcastsPosition
         arguments: ['@service_container']
 
+    duck_tv_app.create_new_week:
+        class: DuckTV\AppBundle\Service\CreateNewWeek
+        arguments: ['@service_container']
+
+    duck_tv_app.fill_current_week:
+        class: DuckTV\AppBundle\Service\FillCurrentWeek
+        arguments: ['@service_container']
+
     duck_tv_app.iso8601_to_seconds:
         class: DuckTV\AppBundle\Service\ISO8601ToSeconds
 

@@ -22,7 +22,7 @@ class Grid
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Slot", mappedBy="grid")
+     * @ORM\OneToMany(targetEntity="DuckTV\AppBundle\Entity\Slot", mappedBy="grid", fetch="EAGER")
      */
     private $slots;
 
@@ -50,7 +50,7 @@ class Grid
     /**
      * @var int
      *
-     * @ORM\Column(name="week_number", type="integer")
+     * @ORM\Column(name="weekNumber", type="integer")
      */
     private $weekNumber;
 
