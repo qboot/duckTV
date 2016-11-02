@@ -1,0 +1,68 @@
+{% extends 'DuckTVAppBundle::layout.html.twig' %}
+
+{% block title %}{{ parent() }} - Grille{% endblock %}
+
+{% block body %}
+    <h1>Grille des transitions</h1>
+
+    <form action="{{ path("duck_tv_app_grid_update_transition") }}" method="post">
+        <table border="1" style="opacity:0">
+            <tr>
+                <th></th>
+                <th>Début des cours</th>
+                <th>Pause de 9h30</th>
+                <th>Pause de 11h</th>
+                <th>Début pause midi</th>
+                <th>Fin pause midi</th>
+                <th>Pause de 15h30</th>
+                <th>Pause de 17h</th>
+                <th>Fin des cours</th>
+                <th></th>
+            </tr>
+            {% for jour in jours %}
+                <tr>
+                    <th>{{ jour.day }}</th>
+                    {% for transition in jour.transitions %}
+                        <td>
+                            {{ transition.videoTitle|length > 30 ? transition.videoTitle|slice(0, 30)|upper ~ '...' : transition.videoTitle|upper  }}
+
+                                <input type="hidden" name="grid[{{ jour.id }}][{{ transition.id }}][id]" value="{{ transition.id }}" />
+                                <input type="url" onClick="this.setSelectionRange(0, this.value.length)" name="grid[{{ jour.id }}][{{ transition.id }}][url]" value="{{ transition.videoUrl }}" />
+                                <input type="submit" name="grid[{{ jour.id }}][{{ transition.id }}][update]" value="Éditer" />
+                        </td>
+                    {% endfor %}
+                        <td>
+                            <input type="submit" name="grid[{{ jour.id }}][update]" value="Sauvegarder" />
+                        </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <input type="submit" name="grid[update]" value="Sauvegarder" />
+    </form>
+
+    <script>
+        // fonction pour inverser les lignes et les colonnes d'un tableau
+        $("table").each(function () {
+            var $this = $(this);
+            var newrows = [];
+            $this.find("tr").each(function () {
+                var i = 0;
+                $(this).find("td,th").each(function () {
+                    i++;
+                    if (newrows[i] === undefined) {
+                        newrows[i] = $("<tr></tr>");
+                    }
+                    newrows[i].append($(this));
+                });
+            });
+            $this.find("tr").remove();
+            $.each(newrows, function () {
+                $this.append(this);
+            });
+        });
+
+        // on joue sur l'opacité au chargement pour éviter l'effet de saut d'inversion des tr td
+        $("table").css({opacity : 1});
+    </script>
+
+{% endblock %}

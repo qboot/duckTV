@@ -9,6 +9,13 @@ services:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
 
+    duck_tv_app.doctrine_listener.transition_creation:
+        class: DuckTV\AppBundle\DoctrineListener\TransitionCreationListener
+        arguments: ['@service_container']
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
     duck_tv_app.update_broadcasts_position:
         class: DuckTV\AppBundle\Service\UpdateBroadcastsPosition
         arguments: ['@service_container']

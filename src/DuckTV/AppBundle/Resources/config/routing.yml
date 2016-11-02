@@ -7,6 +7,11 @@ duck_tv_app_home:
     defaults:
         _controller: DuckTVAppBundle:FrontApp:index
 
+duck_tv_app_get_videos:
+    path:     /recuperer-videos
+    defaults:
+        _controller: DuckTVAppBundle:FrontApp:getVideos
+
 # FOSUserBundle : les routes sont encore à personnaliser
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"

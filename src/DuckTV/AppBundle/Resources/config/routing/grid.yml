@@ -13,10 +13,20 @@ duck_tv_app_next_grid:
     defaults:
         _controller: DuckTVAppBundle:Grid:next
 
+duck_tv_app_transition_grid:
+    path:     /transition
+    defaults:
+        _controller: DuckTVAppBundle:Grid:transition
+
 duck_tv_app_grid_update:
-    path:     /mettre-a-jour
+    path:     /sauvegarder
     defaults:
         _controller: DuckTVAppBundle:Grid:update
+
+duck_tv_app_grid_update_transition:
+    path:     /sauvegarder-transition
+    defaults:
+        _controller: DuckTVAppBundle:Grid:updateTransition
 
 duck_tv_app_grid_fill:
     path:     /remplir

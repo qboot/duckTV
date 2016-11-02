@@ -112,6 +112,61 @@ class GridController extends Controller
         ));
     }
 
+    // FONCTION POUR AFFICHER LA GRILLE DES TRANSITIONS
+    public function transitionAction() {
+
+        // entity manager
+        $em = $this->getDoctrine()->getManager();
+        $apiKey = $this->container->getParameter('api_key');
+
+        // récupérer tous les jours de la semaine par défaut
+        $jours = $em->getRepository('DuckTVAppBundle:Grid')->findBy(
+            array('weekNumber' => 0)
+        );
+
+        return $this->render('DuckTVAppBundle:Grid:transition.html.twig', array(
+            'jours' => $jours
+        ));
+    }
+
+    public function updateTransitionAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+
+        // ON RECUP TOUS LES INPUTS
+        $grid = $request->request->get('grid');
+
+        // si la grille n'est pas un tableau on redirige vers la grille
+        if(!is_array($grid)) {
+            return $this->redirectToRoute('duck_tv_app_transition_grid');
+        }
+
+        // ON CHERCHE QUELLE ACTION DOIT ÊTRE EXÉCUTÉE
+        if(isset($grid["update"])) {
+            // mettre à jour la grille entière
+            $this->updateTransitionGrid($grid);
+        } else {
+            foreach($grid as $day) {
+                if(isset($day["update"])) {
+                    // mettre à jour un jour entier
+                    $this->updateTransitionDay($day);
+                    break; // foreach simple
+                }
+
+                if(is_array($day)) {
+                    foreach($day as $transition) {
+                        if(isset($transition["update"])) {
+                            // mettre à jour un créneau (slot) d'1h30
+                            $this->updateTransition($transition);
+                            break 2; // foreach double
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->redirectToRoute('duck_tv_app_transition_grid');
+    }
+
     // FONCTION POUR METTRE A JOUR LA GRILLE OU UNE PARTIE DE LA GRILLE
     public function updateAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -258,14 +313,17 @@ class GridController extends Controller
         $id = $slot["id"];
         $url = $slot["url"];
 
-        // on vérifie la validité de l'url et la validité de l'id
-        if (filter_var($url, FILTER_VALIDATE_URL) && $id != "") {
-            // on ajoute la nouvelle vidéo
-            $this->addVideoToSlot($slot);
-        }
+        // on ajoute la nouvelle vidéo
+        $this->addVideoToSlot($slot);
 
         foreach($slot as $broadcast) {
             if(is_array($broadcast)) {
+                // ligne pour éviter les erreurs dûes aux tableaux url[] et category[]
+                // qui sont équivalentes à broadcast mais sans le champ id
+                if(!isset($broadcast["id"])) {
+                    continue;
+                }
+
                 // on met à jour les diffusions
                 $this->updateBroadcast($broadcast);
 
@@ -281,77 +339,90 @@ class GridController extends Controller
     }
 
     public function addVideoToSlot($slot) {
+
         $em = $this->getDoctrine()->getManager();
 
         $id = $slot["id"];
-        $url = $slot["url"];
-        $category = $slot["category"];
+        $tabUrl = $slot["url"]; // est un tableau
+        $tabCategory = $slot["category"]; // est un tableau
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        // on vérifie la validité de l'url et la validité de l'id
-        if (filter_var($url, FILTER_VALIDATE_URL) === FALSE || $id == "") {
-            return false;
-        }
 
         $slot = $em->getRepository("DuckTVAppBundle:Slot")->find($id);
         $position = count($slot->getBroadcasts())+1;
 
         // on teste si cette vidéo existe déjà dans notre bdd
+        $i = 0;
+        foreach($tabUrl as $url) {
+            $i++;
+            $j = 0;
+            foreach($tabCategory as $category) {
+                $j++;
+                // on matche les catégories et les urls dans le bon ordre
+                if($i == $j) {
 
-            // puis le service pour convertir url -> id
-            $urlToId = $this->container->get('duck_tv_app.video_url_to_video_id');
+                    if (filter_var($url, FILTER_VALIDATE_URL) === FALSE || $url == "") {
+                        continue;
+                    }
 
-            // puis l'existence en bdd
-            $videoIsset = $em->getRepository('DuckTVAppBundle:Video')->findBy(
-                array('videoId' => $urlToId->VideoUrlToVideoId($url))
-            );
+                    // puis le service pour convertir url -> id
+                    $urlToId = $this->container->get('duck_tv_app.video_url_to_video_id');
 
-            if($videoIsset != array()) {
-                // la vidéo existe déjà
+                    // puis l'existence en bdd
+                    $videoIsset = $em->getRepository('DuckTVAppBundle:Video')->findBy(
+                        array('videoId' => $urlToId->VideoUrlToVideoId($url))
+                    );
 
-                // on met a jour sa catégorie
-                $videoIsset[0]->setCategory($em->getRepository('DuckTVAppBundle:Category')->find($category));
-                $em->persist($videoIsset[0]);
+                    if($videoIsset != array()) {
+                        // la vidéo existe déjà
 
-                // on crée la diffusion et on redirige sur la grille
-                $broadcast = new Broadcast();
-                $broadcast->setSlot($slot);
-                $broadcast->setPosition($position);
-                $broadcast->setVideo($videoIsset[0]);
-                $em->persist($broadcast);
-                $em->flush();
-                return false;
+                        // on met a jour sa catégorie
+                        $videoIsset[0]->setCategory($em->getRepository('DuckTVAppBundle:Category')->find($category));
+                        $em->persist($videoIsset[0]);
+
+                        // on crée la diffusion et on redirige sur la grille
+                        $broadcast = new Broadcast();
+                        $broadcast->setSlot($slot);
+                        $broadcast->setPosition($position);
+                        $broadcast->setVideo($videoIsset[0]);
+                        $em->persist($broadcast);
+                        $em->flush();
+                        continue; // on saute jusqu'à la prochaine itération
+                    }
+                    // fin test
+
+                    // la vidéo n'existe pas
+                    $video = new Video();
+                    $video->setVideoUrl($url);
+                    $video->setCategory($em->getRepository('DuckTVAppBundle:Category')->find($category));
+                    $video->setUser($user);
+
+                    // on teste l'url
+                    // function from Url -> Id Service
+                    $urlToId = $this->container->get('duck_tv_app.video_url_to_video_id');
+
+                    $vidId = $urlToId->VideoUrlToVideoId($video->getVideoUrl());
+
+                    // url ne provient pas de youtube on redirige
+                    if($vidId === false) {
+                        continue; // on saute jusqu'à la prochaine itération
+                    }
+                    // fin test
+
+                    $em->persist($video);
+                    $em->flush();
+
+                    $broadcast = new Broadcast();
+
+                    $broadcast->setSlot($slot);
+                    $broadcast->setPosition($position);
+                    $broadcast->setVideo($video);
+
+                    $em->persist($broadcast);
+                    $em->flush();
+                }
             }
-        // fin test
-
-        $video = new Video();
-        $video->setVideoUrl($url);
-        $video->setCategory($em->getRepository('DuckTVAppBundle:Category')->find($category));
-        $video->setUser($user);
-
-        // on teste l'url
-            // function from Url -> Id Service
-            $urlToId = $this->container->get('duck_tv_app.video_url_to_video_id');
-
-            $vidId = $urlToId->VideoUrlToVideoId($video->getVideoUrl());
-
-            // url ne provient pas de youtube on redirige
-            if($vidId === false) {
-                return false;
-            }
-        // fin test
-
-        $em->persist($video);
-        $em->flush();
-
-        $broadcast = new Broadcast();
-
-        $broadcast->setSlot($slot);
-        $broadcast->setPosition($position);
-        $broadcast->setVideo($video);
-
-        $em->persist($broadcast);
-        $em->flush();
+        }
 
         return false;
     }
@@ -359,6 +430,12 @@ class GridController extends Controller
     public function updateBroadcast($broadcast) {
 
         $em = $this->getDoctrine()->getEntityManager();
+
+        // ligne pour éviter les erreurs dûes aux tableaux url[] et category[] qui sont équivalentes à broadcast mais
+        // sans le champ id
+        if(!isset($broadcast["id"])) {
+            return false;
+        }
 
         $id = $broadcast["id"];
         $url = $broadcast["url"];
@@ -434,6 +511,67 @@ class GridController extends Controller
 
         $updateCastsPos = $this->container->get('duck_tv_app.update_broadcasts_position');
         $updateCastsPos->updateBroadcastsPosition($slot);
+
+        return false;
+    }
+
+    public function updateTransitionGrid($grid) {
+        foreach($grid as $day) {
+            if(is_array($day)) {
+                $this->updateTransitionDay($day);
+            }
+        }
+
+        return false;
+    }
+
+    public function updateTransitionDay($day) {
+        foreach($day as $transition) {
+            if(is_array($transition)) {
+                $this->updateTransition($transition);
+            }
+        }
+
+        return false;
+    }
+
+    public function updateTransition($transition) {
+
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $url = $transition["url"];
+        $id = $transition["id"];
+
+        if (filter_var($url, FILTER_VALIDATE_URL) === FALSE || $url == "") {
+            return false;
+        }
+
+        // service pour convertir url -> id
+        $urlToId = $this->container->get('duck_tv_app.video_url_to_video_id');
+
+        $videoId = $urlToId->VideoUrlToVideoId($url);
+
+        // url ne provient pas de youtube on redirige
+        if($videoId === false) {
+            return false;
+        }
+
+        // puis l'existence en bdd
+        $trans = $em->getRepository('DuckTVAppBundle:Transition')->find($id);
+
+        if($trans != "") {
+            // la transition existe
+            if($trans->getVideoId() == $videoId) {
+                // rien n'a changé on quitte la fonction
+                return false;
+            } else {
+                // il s'agit d'une nouvelle transition
+                // on met à jour l'existante
+                $trans->setVideoId($videoId);
+                $em->persist($trans);
+                $em->flush();
+            }
+        }
 
         return false;
     }

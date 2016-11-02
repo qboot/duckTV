@@ -67,7 +67,7 @@
                                         <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][id]" value="{{ broadcast.id }}" />
                                         <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][position]" class="positionInput" value="{{ broadcast.position }}" />
 
-                                        <a href="{{ path('duck_tv_app_video_show', { 'slug': broadcast.video.slug }) }}">{{ broadcast.video.title|length > 30 ? broadcast.video.title|slice(0, 30) ~ '...' : broadcast.video.title  }}</a><br/>
+                                        <a href="{{ path('duck_tv_app_video_show', { 'slug': broadcast.video.slug }) }}">{{ broadcast.video.title|length > 30 ? broadcast.video.title|slice(0, 30)|upper ~ '...' : broadcast.video.title|upper  }}</a><br/>
 
                                         <input type="submit" class="delete-button" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][delete]" value="" {% if disabled %}disabled{% endif %}>
 
@@ -92,18 +92,24 @@
 
                         <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][id]" value="{{ slot.id }}" />
 
-                        {% if time >= 0 and not disabled %}
-                            <div class="wrap-droppable">
-                                <input type="url" onClick="this.setSelectionRange(0, this.value.length)" class="droppable" name="grid[{{ jour.id }}][{{ slot.id }}][url]" placeholder="url vidéo" />
-                            </div>
-                            <select name="grid[{{ jour.id }}][{{ slot.id }}][category]">
-                                {% for category in categories %}
-                                    <option value="{{ category.id }}">{{ category.name }}</option>
-                                {% endfor %}
-                            </select>
-
-                            <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][add]" value="Ajouter" />
-                        {% endif %}
+                        <div class="wrap-add">
+                            {% if time >= 0 and not disabled %}
+                                <div class="inner-add">
+                                    <div class="item-add">
+                                        <div class="wrap-droppable">
+                                            <input type="url" onClick="this.setSelectionRange(0, this.value.length)" class="droppable" name="grid[{{ jour.id }}][{{ slot.id }}][url][]" placeholder="url vidéo" />
+                                        </div>
+                                        <select name="grid[{{ jour.id }}][{{ slot.id }}][category][]">
+                                            {% for category in categories %}
+                                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="plus"></div>
+                                <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][add]" value="Ajouter" />
+                            {% endif %}
+                        </div>
 
                         {% if not disabled %}
                             <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][update]" value="Mettre à jour" />
@@ -131,7 +137,6 @@
         <img src="{{ video.thumbnail }}" width="150" class="draggable" data-url="{{ video.videoUrl }}" />
     {% endfor %}
 </div>
-
 
 <script>
     // fonction pour inverser les lignes et les colonnes d'un tableau
@@ -176,22 +181,43 @@
 </script>
 <script>
     $(document).ready(function() {
-        $(".draggable").draggable({
-            revert: "invalid",
-            cursor: "move",
-            helper: "clone",
-            cursorAt: { top: 50, left: 75 }
+
+
+        function jqueryUI() {
+            $(".draggable").draggable({
+                revert: "invalid",
+                cursor: "move",
+                helper: "clone",
+                cursorAt: { top: 50, left: 75 }
+            });
+
+            $(".wrap-droppable").droppable({
+                drop: function (event, ui) {
+                    // ui.draggable is the jQuery object for the thing being dragged (and
+                    // hence the thing being dropped).
+                    $(this).children('input').val(ui.draggable.data('url'));
+                    $(this).find(".url-thumbnail").remove();
+                    $(this).prepend('<img src="'+ui.draggable.attr('src')+'" height="40" class="url-thumbnail" />');
+                }
+            });
+        }
+
+        // executes
+        jqueryUI();
+
+        $(".plus").click(function(){
+            var container = $(this).parent().find(".inner-add");
+            var el = $(this).parent().find(".item-add").first();
+
+            container.append('<div class="item-add">'+el.html()+'<div class="minus"></div></div>');
+
+            jqueryUI();
         });
 
-        $(".wrap-droppable").droppable({
-            drop: function (event, ui) {
-                // ui.draggable is the jQuery object for the thing being dragged (and
-                // hence the thing being dropped).
-                $(this).children('input').val(ui.draggable.data('url'));
-                $(this).find(".url-thumbnail").remove();
-                $(this).prepend('<img src="'+ui.draggable.attr('src')+'" height="40" class="url-thumbnail" />');
-            }
+        $(document).on('click', '.minus', function() {
+            $(this).parent().remove();
         });
+
 
         $(".toggle").click(function() {
             $(this).parent().find(".tab").slideToggle("slow");

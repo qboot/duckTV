@@ -6,6 +6,7 @@ use DuckTV\AppBundle\Entity\Broadcast;
 use DuckTV\AppBundle\Entity\Grid;
 use DuckTV\AppBundle\Entity\Slot;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class FrontAppController extends Controller {
@@ -34,5 +35,36 @@ class FrontAppController extends Controller {
         }
 
         return $this->render('DuckTVAppBundle:FrontApp:index.html.twig');
+    }
+
+    // RENVOIE LES VIDÉOS DANS UN OBJET JSON
+    public function getVideosAction() {
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $now = new \DateTime();
+
+        $videos = $em->getRepository("DuckTVAppBundle:Grid")->findBy(
+            array("date" => $now)
+        );
+
+        $transitions = [];
+
+        if(isset($videos[0])) {
+            $defaultDay = $em->getRepository("DuckTVAppBundle:Grid")->findBy(
+                array("day" => $videos[0]->getDay())
+            );
+
+            if(isset($defaultDay[0])) {
+                $transitions = $em->getRepository("DuckTVAppBundle:Transition")->findBy(
+                    array("grid" => $defaultDay[0]->getId())
+                );
+            }
+        }
+
+        // renvoie l'heure du serveur pour des calculs
+        // une liste des vidéos du jour s'il y en a
+        // une liste des transitions du jour
+
+        return new JsonResponse(array("date" => $now, "videos" => $videos, "transitions" => $transitions));
     }
 }

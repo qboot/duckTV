@@ -54,3 +54,14 @@ ul {
 .tab {
     display: none;
 }
+
+.plus, .minus {
+    width: 18px;
+    height: 18px;
+    background-color: pink;
+    border-radius: 50%;
+}
+
+.minus {
+    background-color: blue;
+}
