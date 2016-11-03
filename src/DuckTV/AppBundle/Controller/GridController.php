@@ -37,6 +37,11 @@ class GridController extends Controller
 
     // FONCTION POUR AFFICHER LA GRILLE DE LA SEMAINE COURANTE
     public function currentAction() {
+
+        // petit problème : nécessite un reload pour prendre en compte les changements apportés par fillcurrentweek
+        // faire un refresh
+
+
         $em = $this->getDoctrine()->getEntityManager();
 
         $now = new \DateTime();
@@ -56,7 +61,7 @@ class GridController extends Controller
             $fillCurrentWeek->fillCurrentWeek($now);
         }
 
-        // récupérer tous les jours de la semaine par défaut
+        // récupérer tous les jours de la semaine actuelle
         $jours = $em->getRepository('DuckTVAppBundle:Grid')->findBy(
             array('weekNumber' => $now->format("W"), 'year' => $now->format("Y"))
         );
@@ -311,7 +316,6 @@ class GridController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $id = $slot["id"];
-        $url = $slot["url"];
 
         // on ajoute la nouvelle vidéo
         $this->addVideoToSlot($slot);
@@ -341,6 +345,10 @@ class GridController extends Controller
     public function addVideoToSlot($slot) {
 
         $em = $this->getDoctrine()->getManager();
+
+        if(!isset($slot["url"])) {
+            return false;
+        }
 
         $id = $slot["id"];
         $tabUrl = $slot["url"]; // est un tableau
@@ -434,6 +442,10 @@ class GridController extends Controller
         // ligne pour éviter les erreurs dûes aux tableaux url[] et category[] qui sont équivalentes à broadcast mais
         // sans le champ id
         if(!isset($broadcast["id"])) {
+            return false;
+        }
+
+        if(!isset($broadcast["url"])) {
             return false;
         }
 

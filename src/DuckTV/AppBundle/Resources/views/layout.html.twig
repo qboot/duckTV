@@ -12,6 +12,8 @@
 
             <link rel="stylesheet" type="text/css" href="{{ asset("css/style.css") }}" />
 
+            <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+            <script src="{{ asset("js/jquery-3.1.1.js") }}"></script>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
             <link rel="stylesheet" type="text/css" href="{{ asset("vendor/jquery-ui/css/jquery-ui.css") }}" />
             <script src="{{ asset("vendor/jquery-ui/js/jquery-ui.js") }}"></script>
@@ -23,6 +25,7 @@
         </head>
         <body>
 
+        {% if app.request.get('_route') != 'duck_tv_app_home' %}
             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                 Connecté en tant que {{ app.user.username }}
                 -
@@ -48,6 +51,7 @@
             {% else %}
                 <a href="{{ path('fos_user_security_login') }}">Connexion</a>
             {% endif %}
+        {% endif %}
 
             {# On affiche les messages flash que définissent les contrôleurs du bundle #}
             {% for key, messages in app.session.flashbag.all() %}

@@ -65,3 +65,80 @@ ul {
 .minus {
     background-color: blue;
 }
+
+/************
+
+CODE SERIEUX NE PAS DELETE : FRONTAPP
+
+************/
+
+#player, #wrap-player {
+    width:100%;
+    height:100%;
+    position:fixed;
+    top:0;
+    left:0;
+}
+
+#player {
+    pointer-events: none;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+.animate {
+    -webkit-transition: all 0.125s ease-in;
+    -moz-transition: all 0.125s ease-in;
+    -o-transition: all 0.125s ease-in;
+    transition: all 0.125s ease-in;
+}
+
+#fullscreen {
+    width:35px;
+    height:35px;
+    position:fixed;
+    z-index:2;
+    top:35px;
+    right:35px;
+    cursor:pointer;
+}
+
+#fullscreen::before {
+    content: '';
+    display:block;
+    position:fixed;
+    top:35px;
+    right:35px;
+    width:35px;
+    height:35px;
+    background: url('../img/fullscreen.svg') no-repeat center center;
+    background-size: 100% 100%;
+}
+
+#squarefullscreen {
+    content: '';
+    display:block;
+    position:fixed;
+    top:48px;
+    right:45px;
+    width:15px;
+    height:9px;
+    background-color: rgb(252,227,103);
+    pointer-events: none;=
+}
+
+.squarefullscreenopen {
+    top: 46px !important;
+    right: 42px !important;
+    width: 21px !important;
+    height: 13px !important;
+}

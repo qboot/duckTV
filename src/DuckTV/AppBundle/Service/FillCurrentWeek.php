@@ -37,8 +37,10 @@ class FillCurrentWeek {
         // PEUT-ÊTRE LIMITER AU JOUR EN COURS
         foreach($defaultDays as $defaultDay) {
             foreach($currentDays as $currentDay) {
+
                 // maj : on limite au jour actuel (à partir de 6h du mat') et à ceux déjà passés
                 if($currentDay->getDay() == $defaultDay->getDay() && $currentDay->getDate()->format("Y-m-d") <= $nowMinus->format("Y-m-d")) {
+
                     foreach($defaultDay->getSlots() as $defaultSlot) {
                         foreach($currentDay->getSlots() as $currentSlot) {
                             if($currentSlot->getName() == $defaultSlot->getName()) {
@@ -51,7 +53,7 @@ class FillCurrentWeek {
                                 }
 
                                 // tant que durée d'un créneau <= durée normale d'un créneau (82min) -5min de marge | en secondes
-                                while ($total <= (82 - 5) * 60 * 60 && $total > 0) {
+                                while ($total <= (82 - 5) * 60 * 60) {
                                     // on récupère le bon slot de la semaine par défaut
                                     //dump($defaultSlot);
                                     // on cherche s'il a des vidéos à partir de la durée précédente
@@ -98,7 +100,7 @@ class FillCurrentWeek {
                 }
             }
         }
-
+        
         return false;
 
     }

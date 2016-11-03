@@ -57,12 +57,12 @@
                             {# fin trouver le temps restant #}
 
                             <div class="{{ (time < 0) ? 'fullSlot' : 'emptySlot' }}">
-                                {% if time < 0 %}-{% endif %}{% if hours != 0 %}{{ hours|abs }}h {% endif %}{% if minutes != 0 %}{{ minutes|abs }}m {% endif %}{{ seconds|abs }}s
+                                {% if time < 0 %}Créneau complet : -{% endif %}{% if hours != 0 %}{{ hours|abs }}h {% endif %}{% if minutes != 0 %}{{ minutes|abs }}m {% endif %}{{ seconds|abs }}s
                             </div>
                             <ul class="sortable">
                                 {% for broadcast in slot.broadcasts | sortbyfield('position') %}
                                     <li>
-                                        <div class="handle"></div>
+                                        {% if time > 0 %}<div class="handle"></div>{% endif %}
                                         <div class="toggle"></div>
                                         <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][id]" value="{{ broadcast.id }}" />
                                         <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][position]" class="positionInput" value="{{ broadcast.position }}" />
