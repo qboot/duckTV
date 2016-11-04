@@ -23,4 +23,4 @@ parameters:
 
     # Your twitter API key
     api_twitter_key:   ~
-    api_twitter_secret:~
+    api_twitter_secret: ~
