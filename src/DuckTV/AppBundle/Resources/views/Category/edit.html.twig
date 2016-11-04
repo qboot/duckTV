@@ -5,19 +5,14 @@
 {% block body %}
     <h1>Éditer une catégorie</h1>
 
-    {{ form_start(edit_form) }}
-        {{ form_widget(edit_form) }}
-        <input type="submit" value="Éditer" />
-    {{ form_end(edit_form) }}
+    <div class="edit-form">
+        {{ form_start(edit_form) }}
 
-    <ul>
-        <li>
-            <a href="{{ path('duck_tv_app_category_index') }}">Retour à la liste</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Supprimer">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
+            {{ form_widget(edit_form) }}
+            <input type="submit" value="Éditer" />
+        {{ form_end(edit_form) }}
+    </div>
+
+
+    <a href="{{ path('duck_tv_app_category_index') }}" class="back">Retour à la liste</a>
 {% endblock %}

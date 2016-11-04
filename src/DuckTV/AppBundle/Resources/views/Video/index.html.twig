@@ -3,41 +3,34 @@
 {% block title %}{{ parent() }} - Vidéos{% endblock %}
 
 {% block body %}
-    <h1>Videos list</h1>
+    <h1>Toutes les vidéos</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>ID Vidéo</th>
-                <th>Date de soumission</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+    <h3>Il y a <span>{{ videos|length }}</span> vidéo{% if videos|length > 1 %}s{% endif %} !</h3>
+
+    <div class="wrapAllVideosFromCat">
         {% for video in videos %}
-            <tr>
-                <td><a href="{{ path('duck_tv_app_video_show', { 'slug': video.slug }) }}">{{ video.id }}</a></td>
-                <td>{{ video.videoId }}</td>
-                <td>{% if video.submissionDate %}{{ video.submissionDate|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('duck_tv_app_video_show', { 'slug': video.slug }) }}">afficher</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('duck_tv_app_video_edit', { 'slug': video.slug }) }}">éditer</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('duck_tv_app_video_new') }}">Créer une nouvelle vidéo</a>
-        </li>
-    </ul>
+            {% set duration = video.duration %}
+            {% set dHours = (duration/3600)|round(0, 'floor') %}
+            {% set dMinutes = ((duration/60) % 60)|round(0, 'floor') %}
+            {% set dSeconds = duration % 60 %}
+
+            <div class="vidByCat">
+                <form action="{{ path("duck_tv_app_video_index") }}" method="post">
+                    <input type="hidden" name="video" value="{{ video.id }}" />
+                    <input type="submit" value="" class="video-delete" />
+                </form>
+
+                <a class="vidByCat-title" href="{{ path('duck_tv_app_video_show', { 'slug': video.slug }) }}">{{ video.title }}</a>
+                <div class="vidByCat-thumbnail" style="background:url('{{ video.thumbnail }}') no-repeat center center; background-size: cover;"></div>
+                <div class="vidByCat-duration">
+                    {% if dHours != 0 %}{{ dHours|abs }}h {% endif %}{% if dMinutes != 0 %}{{ dMinutes|abs }}m {% endif %}{{ dSeconds|abs }}s
+                    <div class="vidByCat-cat">{{ video.category.name }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
 {% endblock %}

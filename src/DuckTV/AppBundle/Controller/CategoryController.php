@@ -18,9 +18,19 @@ class CategoryController extends Controller
      * Lists all category entities.
      *
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+
+        $c = $request->request->get('category');
+
+        // on supprime la catégorie
+        if(isset($c) && !empty($c)) {
+            $category = $em->getRepository("DuckTVAppBundle:Category")->find($c);
+
+            $em->remove($category);
+            $em->flush();
+        }
 
         $categories = $em->getRepository('DuckTVAppBundle:Category')->findAll();
 
@@ -65,18 +75,10 @@ class CategoryController extends Controller
             array('category' => $category)
         );
 
-        if(empty($videos)) {
-            $deleteForm = $this->createDeleteForm($category);
 
-            return $this->render('DuckTVAppBundle:Category:show.html.twig', array(
-                'category' => $category,
-                'delete_form' => $deleteForm->createView(),
-            ));
-        } else {
-           return $this->render('DuckTVAppBundle:Category:show.html.twig', array(
-                'category' => $category,
-            ));
-        }
+       return $this->render('DuckTVAppBundle:Category:show.html.twig', array(
+            'category' => $category,
+        ));
     }
 
     /**
@@ -85,7 +87,6 @@ class CategoryController extends Controller
      */
     public function editAction(Request $request, Category $category)
     {
-        $deleteForm = $this->createDeleteForm($category);
         $editForm = $this->createForm('DuckTV\AppBundle\Form\CategoryType', $category);
         $editForm->handleRequest($request);
 
@@ -97,42 +98,7 @@ class CategoryController extends Controller
 
         return $this->render('DuckTVAppBundle:Category:edit.html.twig', array(
             'category' => $category,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            'edit_form' => $editForm->createView()
         ));
-    }
-
-    /**
-     * Deletes a category entity.
-     *
-     */
-    public function deleteAction(Request $request, Category $category)
-    {
-        $form = $this->createDeleteForm($category);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($category);
-            $em->flush();
-        }
-
-        return $this->redirectToRoute('duck_tv_app_category_index');
-    }
-
-    /**
-     * Creates a form to delete a video entity.
-     *
-     * @param Category $video The video entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Category $category)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('duck_tv_app_category_delete', array('slug' => $category->getSlug())))
-            ->setMethod('DELETE')
-            ->getForm()
-            ;
     }
 }

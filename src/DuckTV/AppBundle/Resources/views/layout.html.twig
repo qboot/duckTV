@@ -47,7 +47,7 @@
                             <li>
                                 <ul>
                                     <li><span></span>Étudiants</li>
-                                    <li><a href="{{ path("duck_tv_app_video_index") }}">Liste</a></li>
+                                    <li><a href="{{ path("duck_tv_app_current_grid") }}">Liste</a></li>
                                 </ul>
                             </li>
                             <li>
@@ -76,7 +76,9 @@
                 </div>
 
             {% else %}
-                <a href="{{ path('fos_user_security_login') }}">Connexion</a>
+                {% if app.request.get('_route') != 'fos_user_security_login' %}
+                    <a href="{{ path('fos_user_security_login') }}">Connexion</a>
+                {% endif %}
             {% endif %}
         {% endif %}
 

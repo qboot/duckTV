@@ -3,53 +3,34 @@
 {% block title %}{{ parent() }} - Vidéo : {{ video.title }}{% endblock %}
 
 {% block body %}
-    <h1>Video : {{ video.title }}</h1>
 
-    {#
-        <img src="{{ video.thumbnailStandard }}" alt="standard" />
-        <img src="{{ video.thumbnailMaxRes }}" alt="maxres" />
-    #}
+    {% set duration = video.duration %}
+    {% set dHours = (duration/3600)|round(0, 'floor') %}
+    {% set dMinutes = ((duration/60) % 60)|round(0, 'floor') %}
+    {% set dSeconds = duration % 60 %}
 
-    <div>
-        {{ video.description }}
+    <h1>
+        Video : {{ video.title }}
+
+        <form action="{{ path('duck_tv_app_video_show', { 'slug': video.slug }) }}" method="post">
+            <input type="hidden" name="video" value="{{ video.id }}" />
+            <input type="submit" value="" class="video-delete-special" />
+        </form>
+    </h1>
+
+    <iframe width="900" height="500" class="vid-single" src="https://www.youtube.com/embed/{{ video.videoId }}" frameborder="0" allowfullscreen></iframe>
+
+    <div class="vid-infos">
+        <div class="vid-duration">
+            {% if dHours != 0 %}{{ dHours|abs }}h {% endif %}{% if dMinutes != 0 %}{{ dMinutes|abs }}m {% endif %}{{ dSeconds|abs }}s | {{ video.category.name }}
+            <a class="channel-title" href="{{ video.channelUrl }}">{{ video.channelTitle }}</a>
+        </div>
+
+        <div class="vid-desc">
+            {{ video.description }}
+        </div>
     </div>
 
-    <p>{{ video.submissionDate|date() }}</p>
+    <a href="{{ path('duck_tv_app_video_index') }}" class="back">Retour à la liste</a>
 
-    <p>{{ video.duration }}</p>
-
-    <a href="{{ video.channelUrl }}">{{ video.channelTitle }}</a>
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video.videoId }}" frameborder="0" allowfullscreen></iframe>
-
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ video.id }}</td>
-            </tr>
-            <tr>
-                <th>Videoid</th>
-                <td>{{ video.videoId }}</td>
-            </tr>
-            <tr>
-                <th>Submissiondate</th>
-                <td>{% if video.submissionDate %}{{ video.submissionDate|date('Y-m-d H:i:s') }}{% endif %}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('duck_tv_app_video_index') }}">Retour à la liste</a>
-        </li>
-        <li>
-            <a href="{{ path('duck_tv_app_video_edit', { 'slug': video.slug }) }}">Éditer</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Supprimer">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
 {% endblock %}

@@ -18,9 +18,36 @@ class VideoController extends Controller
      * Lists all video entities.
      *
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+
         $em = $this->getDoctrine()->getManager();
+
+        $v = $request->request->get('video');
+
+        // on supprime la vidéo
+        if(isset($v) && !empty($v)) {
+            $video = $em->getRepository("DuckTVAppBundle:Video")->find($v);
+
+            // on trouve tous les slots rattachés à cette vidéo
+            $broadcasts = $video->getBroadcasts();
+            $tabSlots = [];
+            foreach($broadcasts as $broadcast) {
+                if(!in_array($broadcast->getSlot(), $tabSlots)) {
+                    $tabSlots[] = $broadcast->getSlot();
+                }
+            }
+
+            // puis on la supprime
+            $em->remove($video);
+            $em->flush();
+
+            // puis on met à jour les pos
+            $updateCastsPos = $this->container->get('duck_tv_app.update_broadcasts_position');
+            foreach($tabSlots as $slot) {
+                $updateCastsPos->updateBroadcastsPosition($slot);
+            }
+        }
 
         $videos = $em->getRepository('DuckTVAppBundle:Video')->findAll();
 
@@ -76,84 +103,45 @@ class VideoController extends Controller
      * Finds and displays a video entity.
      *
      */
-    public function showAction(Video $video)
+    public function showAction(Request $request, Video $video)
     {
-        $deleteForm = $this->createDeleteForm($video);
+        $em = $this->getDoctrine()->getManager();
 
-        return $this->render('DuckTVAppBundle:Video:show.html.twig', array(
-            'video' => $video,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
+        $v = $request->request->get('video');
 
-    /**
-     * Displays a form to edit an existing video entity.
-     *
-     */
-    public function editAction(Request $request, Video $video)
-    {
-        $deleteForm = $this->createDeleteForm($video);
-        $editForm = $this->createForm('DuckTV\AppBundle\Form\VideoType', $video);
-        $editForm->handleRequest($request);
+        // on supprime la vidéo
+        if(isset($v) && !empty($v)) {
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('duck_tv_app_video_show', array('slug' => $video->getSlug()));
-        }
-
-        return $this->render('DuckTVAppBundle:Video:edit.html.twig', array(
-            'video' => $video,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
-     * Deletes a video entity.
-     *
-     */
-    public function deleteAction(Request $request, Video $video)
-    {
-        $form = $this->createDeleteForm($video);
-        $form->handleRequest($request);
-
-        // on trouve tous les slots rattachés à cette vidéo
-        $broadcasts = $video->getBroadcasts();
-        $tabSlots = [];
-        foreach($broadcasts as $broadcast) {
-            if(!in_array($broadcast->getSlot(), $tabSlots)) {
-                $tabSlots[] = $broadcast->getSlot();
+            // on trouve tous les slots rattachés à cette vidéo
+            $broadcasts = $video->getBroadcasts();
+            $tabSlots = [];
+            foreach($broadcasts as $broadcast) {
+                if(!in_array($broadcast->getSlot(), $tabSlots)) {
+                    $tabSlots[] = $broadcast->getSlot();
+                }
             }
-        }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            // puis on la supprime
             $em->remove($video);
             $em->flush();
 
+            // puis on met à jour les pos
             $updateCastsPos = $this->container->get('duck_tv_app.update_broadcasts_position');
             foreach($tabSlots as $slot) {
                 $updateCastsPos->updateBroadcastsPosition($slot);
             }
+
+            // on redirige vers la page index vidéo
+            $videos = $em->getRepository('DuckTVAppBundle:Video')->findAll();
+
+            return $this->render('DuckTVAppBundle:Video:index.html.twig', array(
+                'videos' => $videos,
+            ));
+
         }
 
-        return $this->redirectToRoute('duck_tv_app_video_index');
-    }
-
-    /**
-     * Creates a form to delete a video entity.
-     *
-     * @param Video $video The video entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Video $video)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('duck_tv_app_video_delete', array('slug' => $video->getSlug())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
+        return $this->render('DuckTVAppBundle:Video:show.html.twig', array(
+            'video' => $video
+        ));
     }
 }

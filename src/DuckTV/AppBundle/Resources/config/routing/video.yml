@@ -1,24 +1,11 @@
 duck_tv_app_video_index:
     path:     /
     defaults: { _controller: "DuckTVAppBundle:Video:index" }
-    methods:  GET
 
 duck_tv_app_video_show:
     path:     /{slug}/afficher
     defaults: { _controller: "DuckTVAppBundle:Video:show" }
-    methods:  GET
 
 duck_tv_app_video_new:
     path:     /ajouter
     defaults: { _controller: "DuckTVAppBundle:Video:new" }
-    methods:  [GET, POST]
-
-duck_tv_app_video_edit:
-    path:     /{slug}/editer
-    defaults: { _controller: "DuckTVAppBundle:Video:edit" }
-    methods:  [GET, POST]
-
-duck_tv_app_video_delete:
-    path:     /{slug}/supprimer
-    defaults: { _controller: "DuckTVAppBundle:Video:delete" }
-    methods:  DELETE

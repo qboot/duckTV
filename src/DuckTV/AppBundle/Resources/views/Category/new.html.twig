@@ -5,14 +5,13 @@
 {% block body %}
     <h1>Ajouter une catégorie</h1>
 
-    {{ form_start(form) }}
+    <div class="edit-form">
+        {{ form_start(form) }}
         {{ form_widget(form) }}
         <input type="submit" value="Ajouter" />
-    {{ form_end(form) }}
+        {{ form_end(form) }}
+    </div>
 
-    <ul>
-        <li>
-            <a href="{{ path('duck_tv_app_category_index') }}">Retour à la liste</a>
-        </li>
-    </ul>
+
+    <a href="{{ path('duck_tv_app_category_index') }}" class="back">Retour à la liste</a>
 {% endblock %}

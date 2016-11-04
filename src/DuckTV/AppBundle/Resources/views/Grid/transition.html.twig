@@ -8,7 +8,7 @@
     <form action="{{ path("duck_tv_app_grid_update_transition") }}" method="post">
         <table border="1" style="opacity:0">
             <tr>
-                <th></th>
+                <th class="thSpecial"><input type="submit" name="grid[update]" value="" class="refresh refreshGrid" /></th>
                 <th>Début des cours</th>
                 <th>Pause de 9h30</th>
                 <th>Pause de 11h</th>
@@ -17,27 +17,32 @@
                 <th>Pause de 15h30</th>
                 <th>Pause de 17h</th>
                 <th>Fin des cours</th>
-                <th></th>
             </tr>
             {% for jour in jours %}
                 <tr>
-                    <th>{{ jour.day }}</th>
+                    <th>
+                        {{ jour.day }}
+                        <input type="submit" name="grid[{{ jour.id }}][update]" value="" class="refresh refreshDay" />
+                    </th>
                     {% for transition in jour.transitions %}
                         <td>
-                            {{ transition.videoTitle|length > 30 ? transition.videoTitle|slice(0, 30)|upper ~ '...' : transition.videoTitle|upper  }}
-
-                                <input type="hidden" name="grid[{{ jour.id }}][{{ transition.id }}][id]" value="{{ transition.id }}" />
-                                <input type="url" onClick="this.setSelectionRange(0, this.value.length)" name="grid[{{ jour.id }}][{{ transition.id }}][url]" value="{{ transition.videoUrl }}" />
-                                <input type="submit" name="grid[{{ jour.id }}][{{ transition.id }}][update]" value="Éditer" />
+                            <ul>
+                                <li class="liTransition">
+                                    <div class="handleAlternative handleTransition"></div>
+                                    <div class="transitionTitle">{{ transition.videoTitle|length > 17 ? transition.videoTitle|slice(0, 17)|upper ~ '...' : transition.videoTitle|upper  }}</div>
+                                    <div class="toggle toggleTransition"></div>
+                                    <div class="tab">
+                                        <input type="hidden" name="grid[{{ jour.id }}][{{ transition.id }}][id]" value="{{ transition.id }}" />
+                                        <input class="edit-input edit-input-transition" type="url" onClick="this.setSelectionRange(0, this.value.length)" name="grid[{{ jour.id }}][{{ transition.id }}][url]" value="{{ transition.videoUrl }}" />
+                                        <input type="submit" class="edit-button edit-button-transition" name="grid[{{ jour.id }}][{{ transition.id }}][update]" value="" />
+                                    </div>
+                                </li>
+                            </ul>
                         </td>
                     {% endfor %}
-                        <td>
-                            <input type="submit" name="grid[{{ jour.id }}][update]" value="Sauvegarder" />
-                        </td>
                 </tr>
             {% endfor %}
         </table>
-        <input type="submit" name="grid[update]" value="Sauvegarder" />
     </form>
 
     <script>
@@ -63,6 +68,11 @@
 
         // on joue sur l'opacité au chargement pour éviter l'effet de saut d'inversion des tr td
         $("table").css({opacity : 1});
+
+
+        $(".toggle").click(function() {
+            $(this).parent().find(".tab").slideToggle("slow");
+        });
     </script>
 
 {% endblock %}

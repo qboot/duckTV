@@ -9,7 +9,7 @@ class AdminController extends Controller
 {
     public function indexAction() {
 
-        return $this->render('DuckTVAppBundle:Admin:index.html.twig');
+        return $this->redirectToRoute('duck_tv_app_current_grid');
 
     }
 }

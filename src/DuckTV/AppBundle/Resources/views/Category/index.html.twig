@@ -5,37 +5,23 @@
 {% block body %}
     <h1>Liste des catégories</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for category in categories %}
-            <tr>
-                <td><a href="{{ path('duck_tv_app_category_show', { 'slug': category.slug }) }}">{{ loop.index }}</a></td>
-                <td>{{ category.name }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('duck_tv_app_category_show', { 'slug': category.slug }) }}">Voir</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('duck_tv_app_category_edit', { 'slug': category.slug }) }}">Éditer</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('duck_tv_app_category_new') }}">Créer une nouvelle catégorie</a>
-        </li>
-    </ul>
+    <div class="allCategories">
+    {% for category in categories %}
+        <div class="sexyCategory">
+            <a class="category-name" href="{{ path('duck_tv_app_category_show', { 'slug': category.slug }) }}">{{ category.name }}</a>
+            <a class="category-edit" href="{{ path('duck_tv_app_category_edit', { 'slug': category.slug }) }}"></a>
+
+            {% if category.videos|length == 0 %}
+                <form action="{{ path("duck_tv_app_category_index") }}" method="post">
+                    <input type="hidden" name="category" value="{{ category.id }}" />
+                    <input type="submit" value="" class="category-delete" />
+                </form>
+            {% else %}
+                <div class="fake-category-delete"></div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    </div>
+
 {% endblock %}
