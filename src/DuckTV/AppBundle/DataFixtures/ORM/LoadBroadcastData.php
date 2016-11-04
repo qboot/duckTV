@@ -114,57 +114,57 @@ class LoadBroadcastData extends AbstractFixture implements OrderedFixtureInterfa
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-66"),
-                'position' => 2
+                'position' => 1
             ),
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-89"),
-                'position' => 3
+                'position' => 2
             ),
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-90"),
-                'position' => 4
+                'position' => 3
             ),
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-91"),
-                'position' => 5
+                'position' => 4
             ),
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-92"),
-                'position' => 6
+                'position' => 5
             ),
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-93"),
-                'position' => 7
+                'position' => 6
             ),
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-94"),
-                'position' => 8
+                'position' => 7
             ),
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-95"),
-                'position' => 9
+                'position' => 8
             ),
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-96"),
-                'position' => 10
+                'position' => 9
             ),
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-97"),
-                'position' => 11
+                'position' => 10
             ),
             array(
                 'slot' => $this->getReference("lundi-midi-1"),
                 'video' => $this->getReference("video-98"),
-                'position' => 12
+                'position' => 11
             ),
             array(
                 'slot' => $this->getReference("lundi-aprem-1"),
@@ -174,12 +174,12 @@ class LoadBroadcastData extends AbstractFixture implements OrderedFixtureInterfa
             array(
                 'slot' => $this->getReference("lundi-aprem-1"),
                 'video' => $this->getReference("video-102"),
-                'position' => 3
+                'position' => 2
             ),
             array(
                 'slot' => $this->getReference("lundi-aprem-1"),
                 'video' => $this->getReference("video-104"),
-                'position' => 5
+                'position' => 3
             ),
             array(
                 'slot' => $this->getReference("lundi-aprem-2"),
@@ -189,12 +189,12 @@ class LoadBroadcastData extends AbstractFixture implements OrderedFixtureInterfa
             array(
                 'slot' => $this->getReference("lundi-aprem-2"),
                 'video' => $this->getReference("video-76"),
-                'position' => 3
+                'position' => 2
             ),
             array(
                 'slot' => $this->getReference("lundi-aprem-2"),
                 'video' => $this->getReference("video-103"),
-                'position' => 4
+                'position' => 3
             ),
             array(
                 'slot' => $this->getReference("lundi-aprem-3"),
@@ -504,7 +504,7 @@ class LoadBroadcastData extends AbstractFixture implements OrderedFixtureInterfa
             array(
                 'slot' => $this->getReference("mercredi-matin-3"),
                 'video' => $this->getReference("video-139"),
-                'position' => 3
+                'position' => 5
             ),
             array(
                 'slot' => $this->getReference("mercredi-midi-1"),
@@ -614,7 +614,7 @@ class LoadBroadcastData extends AbstractFixture implements OrderedFixtureInterfa
             array(
                 'slot' => $this->getReference("mercredi-aprem-3"),
                 'video' => $this->getReference("video-192"),
-                'position' => 6
+                'position' => 5
             ),
             array(
                 'slot' => $this->getReference("jeudi-matin-1"),
@@ -854,17 +854,17 @@ class LoadBroadcastData extends AbstractFixture implements OrderedFixtureInterfa
             array(
                 'slot' => $this->getReference("vendredi-matin-3"),
                 'video' => $this->getReference("video-136"),
-                'position' => 3
+                'position' => 2
             ),
             array(
                 'slot' => $this->getReference("vendredi-matin-3"),
                 'video' => $this->getReference("video-137"),
-                'position' => 4
+                'position' => 3
             ),
             array(
                 'slot' => $this->getReference("vendredi-matin-3"),
                 'video' => $this->getReference("video-138"),
-                'position' => 5
+                'position' => 4
             ),
             array(
                 'slot' => $this->getReference("vendredi-midi-1"),
@@ -929,7 +929,7 @@ class LoadBroadcastData extends AbstractFixture implements OrderedFixtureInterfa
             array(
                 'slot' => $this->getReference("vendredi-aprem-1"),
                 'video' => $this->getReference("video-157"),
-                'position' => 9
+                'position' => 8
             ),
             array(
                 'slot' => $this->getReference("vendredi-aprem-2"),
@@ -964,17 +964,17 @@ class LoadBroadcastData extends AbstractFixture implements OrderedFixtureInterfa
             array(
                 'slot' => $this->getReference("vendredi-aprem-3"),
                 'video' => $this->getReference("video-184"),
-                'position' => 3
+                'position' => 2
             ),
             array(
                 'slot' => $this->getReference("vendredi-aprem-3"),
                 'video' => $this->getReference("video-188"),
-                'position' => 4
+                'position' => 3
             ),
             array(
                 'slot' => $this->getReference("vendredi-aprem-3"),
                 'video' => $this->getReference("video-189"),
-                'position' => 5
+                'position' => 4
             ),
         );
 
