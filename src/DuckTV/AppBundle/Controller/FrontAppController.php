@@ -8,11 +8,9 @@ use DuckTV\AppBundle\Entity\Slot;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Abraham\TwitterOAuth\TwitterOAuth;
 
 class FrontAppController extends Controller {
-
-    // permettre suppression multiple et ajout multiple à la grille
-    // grille transition !!!
 
     public function indexAction() {
         $em = $this->getDoctrine()->getEntityManager();
@@ -34,7 +32,30 @@ class FrontAppController extends Controller {
             $fillCurrentWeek->fillCurrentWeek($now);
         }
 
-        return $this->render('DuckTVAppBundle:FrontApp:index.html.twig');
+
+        // API METEO KARIM
+        $twitterKey = $this->container->getParameter('api_twitter_key');
+        $twitterSecret = $this->container->getParameter('api_twitter_secret');
+
+        $oauth = new TwitterOAuth($twitterKey,$twitterSecret);
+        $accessToken = $oauth->oauth2('oauth2/token',['grant_type' => 'client_credentials']);
+
+        $twitter = new TwitterOAuth($twitterKey,$twitterSecret,null,$accessToken->access_token);
+
+        $tweets = $twitter->get('statuses/user_timeline', ['screen_name' => 'MorelKarim', 'exclude_replies' => true, 'count' => 3]);
+
+        $meteoservice = $this->container->get('duck_tv_app.openweather');
+
+        $meteo = ($meteoservice->OpenWeather('http://ducktv:ducktvpass@api.openweathermap.org/data/2.5/forecast/city?id=524901&APPID=1c6b7b720ef7a2eceb117a7164493e93&q=Troyes'));
+
+        //return new Response($meteoservice);
+
+        //dump($meteo);
+
+        return $this->render('DuckTVAppBundle:FrontApp:index.html.twig',array(
+            'tweets' => $tweets,
+            'meteo' => $meteo
+        ));
     }
 
     // RENVOIE LES VIDÉOS DANS UN OBJET JSON
@@ -55,6 +76,7 @@ class FrontAppController extends Controller {
 
         if(isset($grid[0])) {
             // on fabrique un tableau pour faciliter l'envoi JSON
+
             foreach($grid[0]->getSlots() as $slot) {
 
                 $slots[$slot->getId()]["beginning"] = $slot->getBeginning();
@@ -112,8 +134,6 @@ class FrontAppController extends Controller {
 
             }
         }
-
-
 
         // renvoie l'heure du serveur pour des calculs
         // une liste des vidéos du jour s'il y en a

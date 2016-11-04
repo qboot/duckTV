@@ -6,6 +6,66 @@
     <div id="fullscreen"><div id="squarefullscreen" class="animate"></div></div>
     <div id="wrap-player" class="noselect" ng-controller="PlayerController">
         <div id="player"></div>
+
+        {# karim api meteo twitter #}
+        <div id="infoplayer">
+            <div id="heureplayer"><div id="heurecontainer">
+                    <style>
+                        #heureplayer
+                        {
+                            background: url("http://openweathermap.org/img/w/{{ meteo.list.0.weather.0.icon }}.png") no-repeat;
+                            background-position: center 80%;
+                        }
+                    </style>
+
+                    <p>
+                        <script>
+                            setInterval(function(){
+                                var ladate=new Date()
+                                var h=ladate.getHours();
+                                if (h<10) {h = "0" + h}
+                                var m=ladate.getMinutes();
+                                if (m<10) {m = "0" + m}
+                                var s=ladate.getSeconds();
+                                if (s<10) {s = "0" + s}
+                                $('#heureplayer p').html(h+":"+m);
+                            },1000);
+                        </script>
+
+                    </p></div></div>
+            <div id="texteplayer">
+                <div id="textcontainer">
+                    {% for tweet in tweets %}
+                        <p>{{ tweet.text }}</p>
+
+                    {% endfor %}
+                </div>
+                <script>
+                    var i = 0;
+                    setInterval(function(){
+                        $('#textcontainer p').removeClass('pShow');
+                        $('#textcontainer p:nth-child('+(i+1)+')').addClass('pShow');
+
+                        i++;
+
+                        if(i == 3) {
+                            i = 0;
+                        }
+                    },4000);
+
+                    /*var margin = 26;
+                    setInterval(function(){
+                        $('#textcontainer p:first-child').css({'margin-top':margin});
+                        margin-=126;
+                        if (margin<-300)
+                        {
+                            margin = 26;
+                        }
+                    },4000);*/
+                </script>
+            </div>
+        </div>
+
     </div>
 
     <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>-->
@@ -24,8 +84,8 @@
         //    after the API code downloads.
 
         var player;
-        //var defaultVideo = 'BQCP-3czIpw';
-        var defaultVideo = 'kcwV7xUUgoo';
+        var defaultVideo = 'BQCP-3czIpw';
+        //var defaultVideo = 'kcwV7xUUgoo';
         var width = $(window).width();
         var height = $(window).height();
 
@@ -57,7 +117,7 @@
 
                 // lignes pour faciliter le dev, à supprimer
                 //current.setHours(current.getHours() - 10);
-                //current.setHours(18, 24, 0);
+                //current.setHours(9, 33, 0);
 
                 var slots = data.slots;
                 // on regarde l'heure actuelle, si on se trouve dans un créneau, si on est avant 7h

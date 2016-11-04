@@ -1,0 +1,4 @@
+duck_tv_app_meteo:
+    path:     /
+    defaults:
+        _controller: DuckTVAppBundle:Meteo:index

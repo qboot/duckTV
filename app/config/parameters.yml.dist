@@ -20,3 +20,7 @@ parameters:
 
     # Your youtube data v3 API key
     api_key:           ~
+
+    # Your twitter API key
+    api_twitter_key:   ~
+    api_twitter_secret:~
