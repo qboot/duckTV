@@ -10,15 +10,17 @@
 
             <title>{% block title %}DuckTV{% endblock %}</title>
 
-            <link rel="stylesheet" type="text/css" href="{{ asset("css/style.css") }}" />
-
             <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
             <script src="{{ asset("js/jquery-3.1.1.js") }}"></script>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
             <link rel="stylesheet" type="text/css" href="{{ asset("vendor/jquery-ui/css/jquery-ui.css") }}" />
             <script src="{{ asset("vendor/jquery-ui/js/jquery-ui.js") }}"></script>
 
-            {% block stylesheets %}{% endblock %}
+            {% block stylesheets %}
+                <link rel="stylesheet" type="text/css" href="{{ asset("css/reset.css") }}" />
+                <link rel="stylesheet" type="text/css" href="{{ asset("css/fonts.css") }}" />
+                <link rel="stylesheet" type="text/css" href="{{ asset("css/style.css") }}" />
+            {% endblock %}
 
             <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" />
 
@@ -27,25 +29,50 @@
 
         {% if app.request.get('_route') != 'duck_tv_app_home' %}
             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                Connecté en tant que {{ app.user.username }}
-                -
-                <a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
-
-                <div>
-                    Grilles
-                        Par défaut
-                        Semaine actuelle
-                        Semaine suivante
-                        Transitions
-                    Vidéos
-                        Liste
-                        Ajouter
-                    Catégories
-                        Liste
-                        Ajouter
-                    Documentation
-                        Guide
-                        Téléchargements
+                <div class="bar animate">
+                    <div class="welcome">Bienvenue, <span>Superadmin</span></div>
+                    <div class="avatar"></div>
+                    <div class="name">{{ app.user.username|capitalize }} <a href="{{ path("fos_user_security_logout") }}" class="logout"></a></div>
+                    <nav class="noselect">
+                        <ul>
+                            <li>
+                                <ul>
+                                    <li><span></span>Grilles</li>
+                                    <li><a href="{{ path("duck_tv_app_default_grid") }}">Par défaut</a></li>
+                                    <li><a href="{{ path("duck_tv_app_current_grid") }}">Semaine actuelle</a></li>
+                                    <li><a href="{{ path("duck_tv_app_next_grid") }}">Semaine suivante</a></li>
+                                    <li><a href="{{ path("duck_tv_app_transition_grid") }}">Transitions</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <ul>
+                                    <li><span></span>Étudiants</li>
+                                    <li><a href="{{ path("duck_tv_app_video_index") }}">Liste</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <ul>
+                                    <li><span></span>Vidéos</li>
+                                    <li><a href="{{ path("duck_tv_app_video_index") }}">Liste</a></li>
+                                    <li><a href="{{ path("duck_tv_app_video_new") }}">Ajouter</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <ul>
+                                    <li><span></span>Catégories</li>
+                                    <li><a href="{{ path("duck_tv_app_category_index") }}">Liste</a></li>
+                                    <li><a href="{{ path("duck_tv_app_category_new") }}">Ajouter</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <ul>
+                                    <li><span></span>Documentation</li>
+                                    <li><a href="https://github.com/qboot/duckTV">Guide</a></li>
+                                    <li><a href="{{ asset("download/fake.zip") }}">Téléchargements</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
 
             {% else %}
@@ -62,7 +89,34 @@
                 {% endfor %}
             {% endfor %}
 
-            {% block body %}{% endblock %}
+
+            <div class="container">
+                {% block body %}{% endblock %}
+            </div>
+
+            <script>
+                $("nav ul li ul li:first-child").hover(function() {
+                    $(this).css({
+                        'background-color' : 'rgb(250,229,102)',
+                        'color' : 'rgb(36,36,36)'
+                    });
+
+                    $(this).children("span").css({
+                        'background-position' : 'center right'
+                    });
+
+                    if(!$(this).parent().parent().find("ul li").is(':animated')) {
+                        $(this).parent().children("li:not(:first-child)").slideDown("slow");
+                    }
+                });
+
+                $("nav ul li ul").mouseleave(function(){
+
+                    $(this).children("li:first-child").removeAttr('style');
+                    $(this).children("li:first-child").children("span").removeAttr('style');
+                    $(this).children("li:not(:first-child)").stop().slideUp("slow");
+                })
+            </script>
 
             {# On définit ce block, dans lequel vont venir s'insérer les autres vues du bundle #}
             {% block fos_user_content %}

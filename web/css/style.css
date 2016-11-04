@@ -1,88 +1,23 @@
-h1 {
-    color:red;
-    font-family:Tahoma;
-    font-size:30px;
-}
-
-.edit-button {
-    width:18px;
-    height:18px;
-    background-color:orange;
-    border:none;
-    outline:none;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.delete-button {
-    width:18px;
-    height:18px;
-    background-color:red;
-    border:none;
-    outline:none;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-ul {
-    list-style-type: none;
-    padding:0;
-}
-
-.handle, .toggle {
-    width: 18px;
-    height: 18px;
-    background-color: greenyellow;
-    border-radius: 50%;
-}
-
-.toggle {
-    background-color: grey;
-}
-
-.droppable {
-    width: 75%;
-    height: 50px;
-    float:right;
-}
-
-.wrap-droppable {
-    width: 100%;
-    height: 50px;
-}
-
-.tab {
-    display: none;
-}
-
-.plus, .minus {
-    width: 18px;
-    height: 18px;
-    background-color: pink;
-    border-radius: 50%;
-}
-
-.minus {
-    background-color: blue;
-}
-
 /************
 
-CODE SERIEUX NE PAS DELETE : FRONTAPP
+CODE SERIEUX NE PAS DELETE
 
 ************/
 
-#player, #wrap-player {
+/************
+
+CLASSES PRATIQUES
+
+************/
+
+
+body, html {
     width:100%;
     height:100%;
-    position:fixed;
-    top:0;
-    left:0;
+    min-height:100%;
+    background-color: rgb(241,241,241);
 }
 
-#player {
-    pointer-events: none;
-}
 
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
@@ -100,6 +35,40 @@ CODE SERIEUX NE PAS DELETE : FRONTAPP
     -moz-transition: all 0.125s ease-in;
     -o-transition: all 0.125s ease-in;
     transition: all 0.125s ease-in;
+}
+
+/********************
+
+SELECTION
+
+********************/
+
+::selection {
+    background: rgb(36,36,36); /* WebKit/Blink Browsers */
+    color:white;
+}
+::-moz-selection {
+    background: rgb(36,36,36); /* Gecko Browsers */
+    color:white;
+}
+
+/************
+
+FRONTAPP
+
+************/
+
+
+#player, #wrap-player {
+    width:100%;
+    height:100%;
+    position:fixed;
+    top:0;
+    left:0;
+}
+
+#player {
+    pointer-events: none;
 }
 
 #fullscreen {
@@ -141,4 +110,548 @@ CODE SERIEUX NE PAS DELETE : FRONTAPP
     right: 42px !important;
     width: 21px !important;
     height: 13px !important;
+}
+
+/************
+
+BARRE
+
+************/
+
+/* gris 36,36,36 */
+/* jaune 250,229,102 */
+
+.bar {
+    width: 250px;
+    height:100%;
+    position:fixed;
+    left:0;
+    top:0;
+    background-color:rgb(36,36,36);
+}
+
+nav {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding-top: 25px;
+}
+
+nav ul {
+    width: 100%;
+}
+
+nav ul li ul li {
+    width:100%;
+    height: 40px;
+    cursor:pointer;
+    font-family: "ms-regular";
+    text-decoration: none;
+    color:white;
+    font-size: 16px;
+    line-height: 40px;
+    box-sizing: border-box;
+    position:relative;
+}
+
+nav ul li ul li:first-child {
+    padding-left: 60px;
+}
+
+nav ul li ul li:first-child span {
+    display: block;
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    top: 10px;
+    left: 22px;
+}
+
+nav ul li:nth-child(1) ul li:first-child span {
+    background: url("../img/pictos/grid.svg") no-repeat left center;
+    background-size: 36px;
+}
+
+nav ul li:nth-child(2) ul li:first-child span {
+    background: url("../img/pictos/avatar.svg") no-repeat left center;
+    background-size: 36px;
+}
+
+nav ul li:nth-child(3) ul li:first-child span {
+    background: url("../img/pictos/videos.svg") no-repeat left center;
+    background-size: 36px;
+}
+
+nav ul li:nth-child(4) ul li:first-child span {
+    background: url("../img/pictos/categories.svg") no-repeat left center;
+    background-size: 36px;
+}
+
+nav ul li:nth-child(5) ul li:first-child span {
+    background: url("../img/pictos/documentation.svg") no-repeat left center;
+    background-size: 36px;
+}
+
+nav ul li ul li:not(:first-child) {
+    padding-left:60px;
+    background-color: rgb(16,16,16);
+    display:none;
+}
+
+nav ul li ul li a {
+    width:100%;
+    height:100%;
+    display:block;
+    font-family: "ms-regular";
+    text-decoration: none;
+    color:white;
+    font-size: 16px;
+    line-height: 40px;
+}
+
+.avatar {
+    width:150px;
+    height:150px;
+    margin-left:auto;
+    margin-right:auto;
+    border-radius: 50%;
+    background: url("../img/avatar.png") no-repeat center center;
+    background-size: cover;
+}
+
+.name {
+    width: 100%;
+    text-align:center;
+    font-family: "ms-regular";
+    font-size: 20px;
+    color: white;
+    box-sizing: border-box;
+    padding:20px;
+}
+
+.welcome {
+    width: 100%;
+    text-transform: uppercase;
+    font-size: 24px;
+    line-height: 32px;
+    text-align: center;
+    color: white;
+    font-family: "ms-light";
+    box-sizing: border-box;
+    padding:20px;
+    padding-bottom: 45px;
+}
+
+.welcome span {
+    color: rgb(250,229,102);
+    font-family: "ms-bold";
+}
+
+.logout {
+    width: 20px;
+    height: 20px;
+    background: url("../img/pictos/logout.svg") no-repeat left center;
+    background-size: 40px 20px;
+    display: inline-block;
+    margin-left: 7px;
+    vertical-align: top;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/************
+
+CONTAINER
+
+************/
+
+.container {
+    width:100%;
+    padding-bottom:60px;
+    box-sizing: border-box;
+    padding-left: 300px;
+}
+
+/************
+
+GRILLE
+
+************/
+
+h1, h2{
+    color:rgb(36,36,36);
+    font-family:"ms-bold";
+    font-size:30px;
+    padding: 25px;
+    padding-left: 15px;
+}
+
+table {
+    width:95%;
+    border-collapse: separate;
+    border-spacing: 15px;
+}
+
+td {
+    background-color: white;
+    font-family: "ms-light";
+    position: relative;
+}
+
+td a {
+    text-decoration: none;
+    color: white;
+    font-family: "ms-regular";
+    font-size: 12px;
+    margin-left:25px;
+}
+
+td ul li {
+    background-color: rgb(36,36,36);
+    box-sizing: border-box;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    margin-bottom: 12px;
+    position:relative;
+}
+
+th {
+    background-color: rgb(36,36,36);
+    color: white;
+    font-family: "ms-regular";
+    font-size: 20px;
+    min-height: 50px;
+    line-height: 50px;
+    min-width: 125px;
+    vertical-align: middle;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.thSpecial {
+    background-color: transparent;
+    text-align: center;
+}
+
+.handle, .toggle, .delete-button {
+    width: 11px;
+    height: 11px;
+    display:block;
+    position: absolute;
+    top:14px;
+}
+
+.toggle {
+    background: url("../img/pictos/menu_down_arrow.svg") no-repeat center center;
+    background-size: 100% 100%;
+    cursor: pointer;
+    right: 10px;
+}
+
+.handle {
+    background: url("../img/pictos/menu_grid.svg") no-repeat center center;
+    background-size: 100% 100%;
+    cursor: n-resize;
+    left: 10px;
+}
+
+.handleAlternative {
+    width: 11px;
+    height: 11px;
+    display:block;
+    position: absolute;
+    top:14px;
+    background: url("../img/pictos/menu_grid.svg") no-repeat center center;
+    background-size: 100% 100%;
+    left: 10px;
+    -ms-transform: rotate(90deg); /* IE 9 */
+    -webkit-transform: rotate(90deg); /* Safari */
+    transform: rotate(90deg);
+}
+
+.delete-button {
+    background: url("../img/pictos/delete.svg") no-repeat center center;
+    background-size: 90% 90%;
+    cursor: pointer;
+    border:none;
+    outline: none;
+    right: 30px;
+}
+
+.fullSlot, .emptySlot {
+    font-size: 11px;
+    width:100%;
+    box-sizing: border-box;
+    padding:15px;
+    text-align: right;
+    font-style: italic;
+}
+
+.fullSlot {
+    color: rgb(216,0,39);
+}
+
+.emptySlot {
+    color: rgb(70,200,90);
+}
+
+.thumbnail {
+    margin-top: 20px;
+    width:100%;
+    height:100px;
+    margin-bottom: 20px;
+}
+
+.edit-input {
+    border:none;
+    outline: none;
+    height: 35px;
+    background-color: white;
+    color: rgb(36,36,36);
+    box-sizing: border-box;
+    padding:5px;
+    line-height: 35px;
+    width: 68%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.input-img {
+    width: 29%;
+    height:35px;
+    background: url("../img/pictos/empty_1.png") no-repeat center center;
+    background-size: cover;
+    display:inline-block;
+}
+
+.edit-button {
+    width:16px;
+    height:16px;
+    background:url("../img/pictos/refresh.svg") no-repeat center center;
+    background-size: 100% 100%;
+    border:none;
+    outline:none;
+    cursor: pointer;
+    float:right;
+    margin-top: -5px;
+    margin-right: 5px;
+    -webkit-transition: all 0.25s ease-in;
+    -moz-transition: all 0.25s ease-in;
+    -o-transition: all 0.25s ease-in;
+    transition: all 0.25s ease-in;
+}
+
+.edit-button:hover {
+    -ms-transform: rotate(-360deg); /* IE 9 */
+    -webkit-transform: rotate(-360deg); /* Safari */
+    transform: rotate(-360deg);
+    -webkit-transition: all 0.25s ease-in;
+    -moz-transition: all 0.25s ease-in;
+    -o-transition: all 0.25s ease-in;
+    transition: all 0.25s ease-in;
+}
+
+.broadcastDate {
+    color: white;
+    font-style: italic;
+    font-size: 11px;
+    margin-right: 5px;
+}
+
+.wrap-droppable {
+    box-sizing: border-box;
+    width: 100%;
+    position:relative;
+    height:50px;
+}
+
+.item-add .wrap-droppable {
+    box-sizing: border-box;
+    width: 90%;
+    position:relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px; /* test */
+}
+
+.inputDroppable {
+    background-color: rgb(242,242,242);
+    border:none;
+    outline: none;
+    height: 35px;
+    color: rgb(36,36,36);
+    box-sizing: border-box;
+    padding:5px;
+    line-height: 35px;
+    width: 66%;
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 2px;
+}
+
+.item-add .wrap-droppable .inputDroppable {
+    margin-left: 3px;
+}
+
+.item-add select {
+    width: 90%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    border: none;
+    outline: none;
+    background-color: rgb(242,242,242);
+    color: rgb(36,36,36);
+    display: block;
+}
+
+ul {
+    list-style-type: none;
+    padding:0;
+}
+
+.tab {
+    display: none;
+}
+
+.wrap-add {
+    position: relative;
+}
+
+.plus, .minus {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+.minus {
+    background: url("../img/pictos/trash.svg") no-repeat center center;
+    background-size: 100% 100%;
+}
+
+.plus {
+    background: url("../img/pictos/add.svg") no-repeat center center;
+    background-size: 75%;
+    position: absolute;
+    bottom: 15px;
+    right: 40px;
+}
+
+.fakeMinus {
+    width: 14px;
+    height: 14px;
+    background: url("../img/pictos/trash.svg") no-repeat center center;
+    background-size: 100% 100%;
+    opacity: 0.15;
+    position: absolute;
+    right:15px;
+    bottom:15px;
+}
+
+.item-add {
+    position: relative;
+    padding-bottom: 40px;
+}
+
+.minus {
+    position: absolute;
+    right:15px;
+    bottom:15px;
+}
+
+.refresh {
+    width:16px;
+    height:16px;
+    background:url("../img/pictos/refresh.svg") no-repeat center center;
+    background-size: 100% 100%;
+    border:none;
+    outline:none;
+    cursor: pointer;
+    float:right;
+    margin-top: -5px;
+    margin-right: 5px;
+    -webkit-transition: all 0.25s ease-in;
+    -moz-transition: all 0.25s ease-in;
+    -o-transition: all 0.25s ease-in;
+    transition: all 0.25s ease-in;
+}
+
+.refresh:hover {
+    -ms-transform: rotate(-360deg); /* IE 9 */
+    -webkit-transform: rotate(-360deg); /* Safari */
+    transform: rotate(-360deg);
+    -webkit-transition: all 0.25s ease-in;
+    -moz-transition: all 0.25s ease-in;
+    -o-transition: all 0.25s ease-in;
+    transition: all 0.25s ease-in;
+}
+
+.refreshSlot {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background:url("../img/pictos/refresh_black.svg") no-repeat center center;
+    background-size: 100% 100%;
+}
+
+.refreshDay {
+    position: absolute;
+    bottom: 18px;
+    right: 20px;
+}
+
+.refreshGrid {
+    width: 20px;
+    height: 20px;
+    float: none;
+    background:url("../img/pictos/refresh_black.svg") no-repeat center center;
+    background-size: 100% 100%;
+}
+
+.allVideos {
+    width: 95%;
+    height: 320px;
+    box-sizing: border-box;
+    padding:10px;
+}
+
+.allVideosInner {
+    width: 100%;
+    height: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space:nowrap;
+}
+
+.singleVideo {
+    width: 240px;
+    height:135px;
+    display:inline-block;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.fillGrid {
+    margin-left:15px;
+    text-decoration: none;
+    width:225px;
+    text-transform: uppercase;
+    background-color: rgb(36,36,36);
+    line-height: 35px;
+    height: 35px;
+    font-family: "ms-regular";
+    font-size: 16px;
+    color: white;
+    display:block;
+    text-align: center;
+    /*border-radius: 8px;*/
+    margin-bottom: 30px;
+    margin-top:10px;
+}
+
+.fillGrid:hover {
+    color: rgb(250,229,102);
 }

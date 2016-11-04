@@ -3,7 +3,7 @@
 
     <table border="1" style="opacity:0">
         <tr>
-            <th></th>
+            <th class="thSpecial"><input type="submit" name="grid[update]" value="" class="refresh refreshGrid" /></th>
             <th>8h - 9h30</th>
             <th>9h30 - 11h</th>
             <th>11h - 12h30</th>
@@ -16,20 +16,31 @@
 
         {% for jour in jours %}
             <tr>
-                <th>
-                    {% if jour.date|date("Y") == 1970 %}
-                        {{ jour.day }}
-                    {% else %}
-                        {{ jour.date|localizeddate('none', 'none', app.request.locale, "Europe/Paris", "cccc d MMMM Y") }}
-                    {% endif %}
-                </th>
-
                 {# si le jour est égal ou plus ancien à aujourd'hui alors on empêche sa modification #}
                 {# on a jusqu'au jour J 6h du matin pour modifier la grille du jour #}
                 {% if jour.date|date_modify("+6 hour")|date("Y-m-d H:i:s") <= "now"|date("Y-m-d H:i:s") and jour.date|date("Y") != 1970 %}
                     {% set disabled = true %}
                 {% else %}
                     {% set disabled = false %}
+                {% endif %}
+
+                <th>
+                    {% if jour.date|date("Y") == 1970 %}
+                        {{ jour.day }}
+                    {% else %}
+                        {{ jour.date|localizeddate('none', 'none', app.request.locale, "Europe/Paris", "cccc d MMMM Y") }}
+                    {% endif %}
+
+                    <input type="hidden" name="grid[{{ jour.id }}][id]" value="{{ jour.id }}" />
+
+                    {% if not disabled %}
+                        <input type="submit" name="grid[{{ jour.id }}][update]" value="" class="refresh refreshDay" />
+                    {% endif %}
+
+                </th>
+
+                {% if jour.slots|length == 0 %}
+                    <td></td>
                 {% endif %}
 
                 {% for slot in jour.slots %}
@@ -57,33 +68,43 @@
                             {# fin trouver le temps restant #}
 
                             <div class="{{ (time < 0) ? 'fullSlot' : 'emptySlot' }}">
-                                {% if time < 0 %}Créneau complet : -{% endif %}{% if hours != 0 %}{{ hours|abs }}h {% endif %}{% if minutes != 0 %}{{ minutes|abs }}m {% endif %}{{ seconds|abs }}s
+                                {% if time < 0 %}-{% endif %}{% if hours != 0 %}{{ hours|abs }}h {% endif %}{% if minutes != 0 %}{{ minutes|abs }}m {% endif %}{{ seconds|abs }}s
                             </div>
                             <ul class="sortable">
                                 {% for broadcast in slot.broadcasts | sortbyfield('position') %}
                                     <li>
-                                        {% if time > 0 %}<div class="handle"></div>{% endif %}
-                                        <div class="toggle"></div>
+                                        {# pas bon il faut que la grille soit la grille actuelle ! #}
+                                        {% if not disabled or type == "default" or type == "next" %}
+                                            <div class="handle"></div>
+                                        {% else %}
+                                            <div class="handleAlternative"></div>
+                                        {% endif %}
                                         <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][id]" value="{{ broadcast.id }}" />
                                         <input type="hidden" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][position]" class="positionInput" value="{{ broadcast.position }}" />
 
-                                        <a href="{{ path('duck_tv_app_video_show', { 'slug': broadcast.video.slug }) }}">{{ broadcast.video.title|length > 30 ? broadcast.video.title|slice(0, 30)|upper ~ '...' : broadcast.video.title|upper  }}</a><br/>
+                                        <a href="{{ path('duck_tv_app_video_show', { 'slug': broadcast.video.slug }) }}">{{ broadcast.video.title|length > 17 ? broadcast.video.title|slice(0, 17)|upper ~ '...' : broadcast.video.title|upper  }}</a>
 
-                                        <input type="submit" class="delete-button" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][delete]" value="" {% if disabled %}disabled{% endif %}>
+                                        {% if not disabled %}
+                                            <input type="submit" class="delete-button" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][delete]" value="" {% if disabled %}disabled{% endif %}>
+                                        {% endif %}
+
+                                        <div class="toggle"></div>
 
                                         <div class="tab">
+                                            <div class="thumbnail" style="background:url('{{ broadcast.video.thumbnail }}') no-repeat center center; background-size: cover;"></div>
                                             {% set duration = broadcast.video.duration %}
                                             {% set dHours = (duration/3600)|round(0, 'floor') %}
                                             {% set dMinutes = ((duration/60) % 60)|round(0, 'floor') %}
                                             {% set dSeconds = duration % 60 %}
-                                            {% if dHours != 0 %}{{ dHours|abs }}h {% endif %}{% if dMinutes != 0 %}{{ dMinutes|abs }}m {% endif %}{{ dSeconds|abs }}s
 
                                             {% if not disabled %}
                                                 <div class="wrap-droppable">
-                                                    <input type="url" onClick="this.setSelectionRange(0, this.value.length)" class="droppable" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][url]" placeholder="url vidéo" value="{{ broadcast.video.videoUrl }}" />
+                                                    <div class="input-img"></div>
+                                                    <input class="edit-input" type="url" onClick="this.setSelectionRange(0, this.value.length)" class="droppable" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][url]" placeholder="Vidéo Youtube" value="{{ broadcast.video.videoUrl }}" />
                                                 </div>
                                                 <input type="submit" class="edit-button" name="grid[{{ jour.id }}][{{ slot.id }}][{{ broadcast.id }}][update]" value="" />
                                             {% endif %}
+                                            <div class="broadcastDate">{% if dHours != 0 %}{{ dHours|abs }}h {% endif %}{% if dMinutes != 0 %}{{ dMinutes|abs }}m {% endif %}{{ dSeconds|abs }}s</div>
                                         </div>
                                     </li>
                                 {% endfor %}
@@ -97,45 +118,43 @@
                                 <div class="inner-add">
                                     <div class="item-add">
                                         <div class="wrap-droppable">
-                                            <input type="url" onClick="this.setSelectionRange(0, this.value.length)" class="droppable" name="grid[{{ jour.id }}][{{ slot.id }}][url][]" placeholder="url vidéo" />
+                                            <div class="input-img"></div>
+                                            <input type="url" onClick="this.setSelectionRange(0, this.value.length)" class="droppable inputDroppable" name="grid[{{ jour.id }}][{{ slot.id }}][url][]" placeholder="Vidéo Youtube" />
                                         </div>
                                         <select name="grid[{{ jour.id }}][{{ slot.id }}][category][]">
                                             {% for category in categories %}
                                                 <option value="{{ category.id }}">{{ category.name }}</option>
                                             {% endfor %}
                                         </select>
+                                        <div class="fakeMinus"></div>
                                     </div>
                                 </div>
                                 <div class="plus"></div>
-                                <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][add]" value="Ajouter" />
+                                {#<input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][add]" value="Ajouter" />#}
                             {% endif %}
                         </div>
 
                         {% if not disabled %}
-                            <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][update]" value="Mettre à jour" />
+                            <input type="submit" name="grid[{{ jour.id }}][{{ slot.id }}][update]" value="" class="refresh refreshSlot" />
                         {% endif %}
                     </td>
                 {% endfor %}
-
-                <td>
-                    <input type="hidden" name="grid[{{ jour.id }}][id]" value="{{ jour.id }}" />
-
-                    {% if not disabled %}
-                        <input type="submit" name="grid[{{ jour.id }}][update]" value="Mettre à jour" />
-                    {% endif %}
-                </td>
             </tr>
         {% endfor %}
     </table>
-
-    <input type="submit" name="grid[update]" value="Mettre à jour" />
-
 </form>
 
-<div>
+<h2>Vidéos</h2>
+
+<div class="allVideos">
+    <div class="allVideosInner">
     {% for video in videos %}
-        <img src="{{ video.thumbnail }}" width="150" class="draggable" data-url="{{ video.videoUrl }}" />
+        {% if (loop.length/2|number_format+1) == loop.index %}
+            <br/>
+        {% endif %}
+        <div class="singleVideo draggable" style="background: url('{{ video.thumbnail }}') no-repeat center center; background-size: cover;" data-url="{{ video.videoUrl }}" data-thumbnail="{{ video.thumbnail }}"></div>
     {% endfor %}
+    </div>
 </div>
 
 <script>
@@ -195,9 +214,10 @@
                 drop: function (event, ui) {
                     // ui.draggable is the jQuery object for the thing being dragged (and
                     // hence the thing being dropped).
+                    //alert(ui.draggable.data('url'));
                     $(this).children('input').val(ui.draggable.data('url'));
-                    $(this).find(".url-thumbnail").remove();
-                    $(this).prepend('<img src="'+ui.draggable.attr('src')+'" height="40" class="url-thumbnail" />');
+                    $(this).find(".input-img").remove();
+                    $(this).prepend('<div class="input-img" style="background: url('+ui.draggable.data('thumbnail')+') no-repeat center center; background-size: cover;"></div>');
                 }
             });
         }
@@ -210,6 +230,8 @@
             var el = $(this).parent().find(".item-add").first();
 
             container.append('<div class="item-add">'+el.html()+'<div class="minus"></div></div>');
+            elBis = $(this).parent().find(".item-add").last();
+            elBis.find(".input-img").removeAttr("style");
 
             jqueryUI();
         });
