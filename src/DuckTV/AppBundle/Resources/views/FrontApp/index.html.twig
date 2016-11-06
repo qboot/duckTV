@@ -78,7 +78,7 @@
                     condition = "very_cloud";
                 }
 
-                $(".infoWeatherIcon").attr("src", "img/weather/"+condition+".svg");
+                $(".infoWeatherIcon").attr("src", "/img/weather/"+condition+".svg");
                 $(".infoTemperature").html("<span></span>"+temp+"°");
                 $(".infoWind").html("<span></span>"+wind+" km/h");
                 $(".infoHour").html(aDate.getHours()+":"+aDate.getMinutes());
@@ -532,12 +532,14 @@
                                     infoTRemaining.setSeconds(Math.abs(Math.round(player.getCurrentTime()-player.getDuration())));
                                     $(".timeRemaining").html("-"+((infoTRemaining.getHours() != 0) ? ("0"+infoTRemaining.getHours()).slice(-2)+":" : "") + ("0"+infoTRemaining.getMinutes()).slice(-2) +":"+ ("0"+infoTRemaining.getSeconds()).slice(-2));
                                 },100);
+                            },
+                    'onReady':
+                            function(e) {
+                                // on attend que le player soit prêt pour lancer notre application
+                                loadApplication();
                             }
                 }
             });
-
-            // on attend que le player soit prêt pour lancer notre application
-            loadApplication();
 
             // au resize on change la taille du player
             $(window).resize(function(){

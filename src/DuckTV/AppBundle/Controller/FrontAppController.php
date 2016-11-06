@@ -69,8 +69,8 @@ class FrontAppController extends Controller {
         $now = new \DateTime();
 
         // POUR DEBUG A DELETE
-        $now->modify("-2 day");
-        $now->modify("-7 hour");
+        //$now->modify("-2 day");
+        //$now->modify("-7 hour");
         // $now->modify("+21 minute");
 
         $grid = $em->getRepository("DuckTVAppBundle:Grid")->findBy(
