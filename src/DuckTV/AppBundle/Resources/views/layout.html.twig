@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <html lang="fr" ng-app="monApp">
+    <html lang="fr">
         <head>
             <meta charset="UTF-8" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -47,7 +47,7 @@
                             <li>
                                 <ul>
                                     <li><span></span>Étudiants</li>
-                                    <li><a href="{{ path("duck_tv_app_current_grid") }}">Liste</a></li>
+                                    <li><a href="#">Liste</a></li>
                                 </ul>
                             </li>
                             <li>
@@ -68,7 +68,7 @@
                                 <ul>
                                     <li><span></span>Documentation</li>
                                     <li><a href="https://github.com/qboot/duckTV">Guide</a></li>
-                                    <li><a href="{{ asset("download/fake.zip") }}">Téléchargements</a></li>
+                                    <li><a href="{{ asset("download/sources.zip") }}">Téléchargements</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -97,27 +97,34 @@
             </div>
 
             <script>
-                $("nav ul li ul li:first-child").hover(function() {
-                    $(this).css({
-                        'background-color' : 'rgb(250,229,102)',
-                        'color' : 'rgb(36,36,36)'
-                    });
+                $("nav ul li ul li:first-child").click(function() {
 
-                    $(this).children("span").css({
-                        'background-position' : 'center right'
-                    });
+                    if ($("nav ul li ul li").is(':animated')) {
+                        return false;
+                    }
 
-                    if(!$(this).parent().parent().find("ul li").is(':animated')) {
+                    var isDown = ($(this).hasClass("itemClicked")) ? true : false;
+
+                    // on enlève les styles
+                    var el = $("nav ul li ul li:first-child");
+                    el.removeClass('itemClicked');
+                    el.children("span").removeAttr('style');
+                    el.parent().children("li:not(:first-child)").slideUp("slow");
+
+                    // on applique nos styles
+                    if(!isDown) {
+                        $(this).addClass('itemClicked');
+                        $(this).children("span").css({'background-position': 'center right'});
                         $(this).parent().children("li:not(:first-child)").slideDown("slow");
                     }
                 });
 
-                $("nav ul li ul").mouseleave(function(){
-
-                    $(this).children("li:first-child").removeAttr('style');
-                    $(this).children("li:first-child").children("span").removeAttr('style');
-                    $(this).children("li:not(:first-child)").stop().slideUp("slow");
-                })
+                $("nav ul li ul li:first-child").hover(
+                        function(){
+                            $(this).children("span").addClass("spanBackgroundBis");
+                        }, function() {
+                            $(this).children("span").removeClass("spanBackgroundBis");
+                        });
             </script>
 
             {# On définit ce block, dans lequel vont venir s'insérer les autres vues du bundle #}

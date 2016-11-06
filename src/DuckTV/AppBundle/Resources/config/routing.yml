@@ -12,9 +12,10 @@ duck_tv_app_get_videos:
     defaults:
         _controller: DuckTVAppBundle:FrontApp:getVideos
 
-duck_tv_app_meteo:
-    resource: "@DuckTVAppBundle/Resources/config/routing/meteo.yml"
-    prefix:   /meteo
+duck_tv_app_get_weather:
+    path:     /recuperer-meteo
+    defaults:
+        _controller: DuckTVAppBundle:FrontApp:getWeather
 
 # FOSUserBundle : les routes sont encore à personnaliser
 fos_user:

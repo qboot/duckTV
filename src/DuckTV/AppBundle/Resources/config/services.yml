@@ -33,6 +33,3 @@ services:
 
     duck_tv_app.video_url_to_video_id:
         class: DuckTV\AppBundle\Service\VideoUrlToVideoId
-
-    duck_tv_app.openweather:
-        class: DuckTV\AppBundle\Service\OpenWeather

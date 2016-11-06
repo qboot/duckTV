@@ -4,120 +4,111 @@
 
 {% block body %}
     <div id="fullscreen"><div id="squarefullscreen" class="animate"></div></div>
-    <div id="wrap-player" class="noselect" ng-controller="PlayerController">
+    <div id="wrap-player" class="noselect">
         <div id="player"></div>
-
-        {# karim api meteo twitter #}
-        <div id="infoplayer">
-            <div id="heureplayer"><div id="heurecontainer">
-                    <style>
-                        #heureplayer
-                        {
-                            background: url("http://openweathermap.org/img/w/{{ meteo.list.0.weather.0.icon }}.png") no-repeat;
-                            background-position: center 80%;
-                        }
-                    </style>
-
-                    <p>
-                        <script>
-                            setInterval(function(){
-                                var ladate=new Date()
-                                var h=ladate.getHours();
-                                if (h<10) {h = "0" + h}
-                                var m=ladate.getMinutes();
-                                if (m<10) {m = "0" + m}
-                                var s=ladate.getSeconds();
-                                if (s<10) {s = "0" + s}
-                                $('#heureplayer p').html(h+":"+m);
-                            },1000);
-                        </script>
-
-                    </p></div></div>
-            <div id="texteplayer">
-                <div id="textcontainer">
-                    {% for tweet in tweets %}
-                        <p>{{ tweet.text }}</p>
-
-                    {% endfor %}
-                </div>
-                <script>
-                    var i = 0;
-                    setInterval(function(){
-                        $('#textcontainer p').removeClass('pShow');
-                        $('#textcontainer p:nth-child('+(i+1)+')').addClass('pShow');
-
-                        i++;
-
-                        if(i == 3) {
-                            i = 0;
-                        }
-                    },4000);
-
-                    /*var margin = 26;
-                    setInterval(function(){
-                        $('#textcontainer p:first-child').css({'margin-top':margin});
-                        margin-=126;
-                        if (margin<-300)
-                        {
-                            margin = 26;
-                        }
-                    },4000);*/
-                </script>
-            </div>
-        </div>
-
     </div>
 
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>-->
-    <script src="{{ asset("js/angular.js") }}"></script>
+
+    <div class="wrapInfoPlayer">
+        <div class="innerInfoPlayer">
+            <div class="infoWeather">
+                <div class="infoHour">00:00</div>
+
+                <img class="infoWeatherIcon" src="{{ asset('img/weather/cloud.svg') }}" />
+                <div class="infoSeparator"></div> <!-- casser le display inline block-->
+                <div class="infoTemperature"><span></span>0°</div>
+                <div class="infoWind"><span></span>0 km/h</div>
+            </div>
+            <div class="infoPlayer">
+                <div class="videoTitle"><span></span></div>
+                <div class="barPlayer">
+                    <div class="innerBarPlayer">
+                        <div class="barBackground"></div>
+                        <div class="barPosition"></div>
+                        <div class="barCursor"></div>
+                        <div class="timeRemaining">-00:00</div>
+                    </div>
+                </div>
+                <div class="infoTweet">Ceci est un tweet</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapPlanning">
+        <div class="innerWrapPlanning">
+            <img src="{{ asset("img/logo.png") }}" alt="Duck TV" class="logo" />
+            <h1>Duck.TV</h1>
+        </div>
+    </div>
 
     <script>
-        // 2. This code loads the IFrame Player API code asynchronously.
+        function loadWeather() {
+            $.getJSON('{{ path("duck_tv_app_get_weather") }}', function(data){
+                var w = data.weather.weather[0].id;
+                var aDate = new Date(data.actualDate.date);
+                var condition = "cloud";
+                var temp = Math.round(data.weather.main.temp);
+                var wind = Math.round(data.weather.wind.speed*3.6);
 
-        var tag = document.createElement('script');
+                if (w == 200 || w == 201 || w == 202 || w == 230 || w == 231 || w == 232) {
+                    condition = "very_thunderstorm";
+                } else if(w == 210) {
+                    condition = "little_thunderstorm";
+                } else if(w == 211 || w == 212 || w == 221) {
+                    condition = "thunderstorm";
+                } else if(w == 300 || w == 301 || w == 302 || w == 310 || w == 311 || w == 312 || w == 313 || w == 314 || w == 321) {
+                    condition = "very_rain";
+                } else if(w == 500 || w == 501 || w == 502 || w == 503 || w == 504 || w == 511 || w == 520 || w == 521 || w == 522 || w == 531) {
+                    condition = "rain";
+                } else if(w == 600 || w == 601 || w == 602 || w == 611 || w == 612 || w == 615 || w == 616 || w == 620 || w == 621 || w == 622) {
+                    condition = "snow";
+                } else if(w == 800) {
+                    if(aDate.getHours()*60 + aDate.getMinutes() > 6*60 + 30 && aDate.getHours()*60 + aDate.getMinutes() < 19*60) {
+                        condition = "sun";
+                    } else {
+                        condition = "moon";
+                    }
+                } else if(w == 801) {
+                    if(aDate.getHours()*60 + aDate.getMinutes() > 6*60 + 30 && aDate.getHours()*60 + aDate.getMinutes() < 19*60) {
+                        condition = "sun_cloud";
+                    } else {
+                        condition = "moon_cloud";
+                    }
+                } else if(w == 803 || w == 804) {
+                    condition = "very_cloud";
+                }
 
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                $(".infoWeatherIcon").attr("src", "img/weather/"+condition+".svg");
+                $(".infoTemperature").html("<span></span>"+temp+"°");
+                $(".infoWind").html("<span></span>"+wind+" km/h");
+                $(".infoHour").html(aDate.getHours()+":"+aDate.getMinutes());
 
-        // 3. This function creates an <iframe> (and YouTube player)
-        //    after the API code downloads.
 
-        var player;
-        var defaultVideo = 'BQCP-3czIpw';
-        //var defaultVideo = 'kcwV7xUUgoo';
-        var width = $(window).width();
-        var height = $(window).height();
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: height,
-                width: width,
-                controls: 0,
-                videoId: defaultVideo, // mettre une vidéo par défaut !
-                playerVars: { 'autoplay': 1, 'controls': 0, 'rel': 0, 'iv_load_policy': 3, 'modestbranding': 1, 'showinfo': 0, 'loop': 1, 'playlist': defaultVideo }
+                // on actualise l'heure chaque seconde
+                setInterval(function(){
+                    aDate.setSeconds(aDate.getSeconds()+1);
+                    $('.infoHour').html(("0"+aDate.getHours()).slice(-2)+":"+("0"+aDate.getMinutes()).slice(-2));
+                },1000);
             });
+
+            // on rappelle la fonction toutes les demi heures
+            setTimeout(function(){
+                loadWeather();
+            }, 30*60*1000);
         }
 
-        /************************
-         *
-         * ANGULAR JS
-         *
-         ***********************/
-        var app = angular.module('monApp',[]);
-        app.controller('PlayerController',['$scope', '$http', function($scope, $http) {
+        loadWeather();
+    </script>
 
-            // test fonction
-            function callJSON($scope, $http) {
+    <script>
+
+        // test fonction
+        function loadApplication() {
 
             // début de la fonction en cas de succès de récup du JSON
-            $http.get('{{ path("duck_tv_app_get_videos") }}').success(function(data){
+            $.getJSON('{{ path("duck_tv_app_get_videos") }}', function(data){
 
                 var current = new Date(data.date.date);
-
-                // lignes pour faciliter le dev, à supprimer
-                //current.setHours(current.getHours() - 10);
-                //current.setHours(9, 33, 0);
 
                 var slots = data.slots;
                 // on regarde l'heure actuelle, si on se trouve dans un créneau, si on est avant 7h
@@ -209,6 +200,7 @@
                             for (var t in ts) {
                                 var myTBeginning = ((new Date(ts[t].beginning.date)).getHours()*60*60 + (new Date(ts[t].beginning.date)).getMinutes()*60 + (new Date(ts[t].beginning.date)).getSeconds());
                                 var myTEnd = ((new Date(ts[t].end.date)).getHours()*60*60 + (new Date(ts[t].end.date)).getMinutes()*60 + (new Date(ts[t].end.date)).getSeconds());
+                                var myTCurrentTime = (current.getHours()*60*60 + current.getMinutes()*60 + current.getSeconds());
                                 if(findTransition >= myTBeginning && findTransition < myTEnd) {
                                     // c'est la bonne transition !
                                     myT["duration"] = ts[t].videoDuration;
@@ -220,13 +212,26 @@
                             // plus qu'à boucler pour remplir la queue
                             //console.log(myT);
                             //console.log(findCurrentVideo);
-                            while(findCurrentVideo < result["duration"]) {
+                            /*while(findCurrentVideo < result["duration"]) {
                                 queue.push(myT["id"]);
                                 findCurrentVideo += myT["duration"];
-                            }
+                            }*/
+
+                            // modif pour alléger le player
+                            // cas un peu plus complexe
+                            // on doit faire 1 settimeout
+                            // debut+realDuration-actuelle
+                            var transitionInAdvance = ((new Date(result["beginning"])).getHours()*60*60 + (new Date(result["beginning"])).getMinutes()*60 + (new Date(result["beginning"])).getSeconds())+result["realDuration"]-myTCurrentTime;
+
+                            setTimeout(function(){
+                                player.loadVideoById(myT["id"]);
+                            }, transitionInAdvance*1000);
+
+                            console.log(transitionInAdvance);
+
                         }
 
-                    // cas ou toutes les vidéos du créneau ont été lues mais il reste du temps
+                        // cas ou toutes les vidéos du créneau ont été lues mais il reste du temps
                     } else {
                         // on remplit la file d'attente avec la transition suivante
                         //var durationToFill = result["duration"] - result["realDuration"]; // temps qu'il reste de vide dans le slot
@@ -252,11 +257,15 @@
                         // plus qu'à boucler pour remplir la queue
                         //console.log(myT);
                         //console.log(findCurrentVideo);
-                        var cpt = startedFrom;
+                        /*var cpt = startedFrom;
                         while(cpt < result["duration"]) {
                             queue.push(myT2["id"]);
                             cpt += myT2["duration"];
-                        }
+                        }*/
+
+                        // modif pour alléger le player
+                        // dans ce cas on a juste a faire date de fin créneau - date courante
+                        player.loadVideoById(myT2["id"]);
                     }
 
                     setTimeout(function() {
@@ -264,18 +273,19 @@
                         // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
                         // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
                         // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
-                        callJSON($scope, $http);
+                        loadApplication();
                     }, endedIn*1000);
 
                     // API YT API YT API YT
                     // API YT API YT API YT
                     // API YT API YT API YT
                     // API YT API YT API YT
-                    player.loadPlaylist(queue,0,currentVideoStartedFrom);
+                    if(typeof queue !== 'undefined' && queue.length > 0) {
+                        player.loadPlaylist(queue,0,currentVideoStartedFrom);
 
-                    console.log(queue);
-                    console.log(currentVideoStartedFrom);
-
+                        console.log(queue);
+                        console.log(currentVideoStartedFrom);
+                    }
 
                 } else {
                     // on n'est pas dans un créneau...
@@ -317,23 +327,18 @@
                             //console.log(myTransition["end"] + " " + tCurrentTime);
                             var tCpt = tCurrentTime;
 
-                            while(tCpt < myTransition["end"]) {
-                                queue.push(myTransition["id"]);
-                                tCpt += myTransition["duration"];
-                            }
-
                             // API YT API YT API YT
                             // API YT API YT API YT
-                            player.loadPlaylist(queue,0,currentVideoStartedFrom);
+                            player.loadVideoById(myTransition["id"], currentVideoStartedFrom);
+                            // currentVideoStartedFrom ?
                             // API YT API YT API YT
                             // API YT API YT API YT
-                            console.log(queue);
 
                             var tRemainingTime = myTransition["end"] - tCurrentTime;
                             //console.log(tRemainingTime);
 
                             setTimeout(function(){
-                                callJSON($scope,$http);
+                                loadApplication();
                                 // sera déclanché à la fin théorique du slot, ie. 9h26, 10h54, etc
                                 // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
                                 // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
@@ -357,7 +362,7 @@
                                 var remainingTime = dayBeginning-current;
 
                                 setTimeout(function(){
-                                    callJSON($scope,$http);
+                                    loadApplication();
                                     // sera déclanché à la fin théorique du slot, ie. 9h26, 10h54, etc
                                     // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
                                     // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
@@ -366,7 +371,7 @@
 
                                 // API YT API YT API YT
                                 // API YT API YT API YT
-                                //player.loadPlaylist(defaultVideo,0,0);
+                                player.loadVideoById(defaultVideo);
                                 // API YT API YT API YT
                                 // API YT API YT API YT
 
@@ -379,7 +384,7 @@
                                 var remainingTime = tomorrowBeginning-current;
 
                                 setTimeout(function(){
-                                    callJSON($scope,$http);
+                                    loadApplication();
                                     // sera déclanché à la fin théorique du slot, ie. 9h26, 10h54, etc
                                     // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
                                     // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
@@ -388,14 +393,14 @@
 
                                 // API YT API YT API YT
                                 // API YT API YT API YT
-                                //player.loadPlaylist([defaultVideo],0,0);
+                                player.loadVideoById(defaultVideo);
                                 // API YT API YT API YT
                                 // API YT API YT API YT
 
                             } else {
 
                                 setTimeout(function(){
-                                    callJSON($scope,$http);
+                                    loadApplication();
                                     // sera déclanché à la fin théorique du slot, ie. 9h26, 10h54, etc
                                     // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
                                     // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
@@ -404,7 +409,7 @@
 
                                 // API YT API YT API YT
                                 // API YT API YT API YT
-                                //player.loadPlaylist([defaultVideo],0,0);
+                                player.loadVideoById(defaultVideo);
                                 // API YT API YT API YT
                                 // API YT API YT API YT
 
@@ -422,7 +427,7 @@
                         var remainingTime = tomorrowBeginning-current;
 
                         setTimeout(function(){
-                            callJSON($scope,$http);
+                            loadApplication();
                             // sera déclanché à la fin théorique du slot, ie. 9h26, 10h54, etc
                             // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
                             // ICI IL FAUDRAIT RELANCER UN APPEL JSON ET REFAIRE TOUT LE PROCESS
@@ -431,7 +436,7 @@
 
                         // API YT API YT API YT
                         // API YT API YT API YT
-                        //player.loadPlaylist([defaultVideo],0,0);
+                        player.loadVideoById(defaultVideo);
                         // API YT API YT API YT
                         // API YT API YT API YT
                     }
@@ -440,26 +445,26 @@
 
                 // EXPLICATIONS:
                 // si result n'est pas un tableau vide
-                    // on est un jour de la semaine sauf week-end
-                    // ET on est dans un créneau
-                        // commencé depuis combien de temps ?
-                        // se finit quand normalement ?
-                        // se finit vraiment quand ?
-                        // on trouve la vidéo en cours de lecture
-                        // avec l'api YT on la lance à la minute voulue
-                        // on ajoute les vidéos d'APRES à la liste des vidéos à lire
+                // on est un jour de la semaine sauf week-end
+                // ET on est dans un créneau
+                // commencé depuis combien de temps ?
+                // se finit quand normalement ?
+                // se finit vraiment quand ?
+                // on trouve la vidéo en cours de lecture
+                // avec l'api YT on la lance à la minute voulue
+                // on ajoute les vidéos d'APRES à la liste des vidéos à lire
 
-                        // L'un ou l'autre ???
-                        // on fait un settimeout jusqu'à la fin théorique du créneau
-                            // dans lequel on relance la fonction et la requête ajax
+                // L'un ou l'autre ???
+                // on fait un settimeout jusqu'à la fin théorique du créneau
+                // dans lequel on relance la fonction et la requête ajax
                 // sinon
-                    // on est dans une transition ?
-                        // si oui :
+                // on est dans une transition ?
+                // si oui :
 
-                        // sinon
-                            // on est le matin avant diffusion
-                            // on est le soir après diffusion
-                            // on est un jour du week end
+                // sinon
+                // on est le matin avant diffusion
+                // on est le soir après diffusion
+                // on est un jour du week end
 
 
                 // date clef 7h tous les matins : on refait un appel
@@ -468,11 +473,80 @@
 
             }); // fin de la fonction en cas de succès de récup du JSON
 
-            }
+        }
+    </script>
 
-            callJSON($scope,$http);
+    <script>
+        // 2. This code loads the IFrame Player API code asynchronously.
 
-        }]);
+        var tag = document.createElement('script');
+
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // 3. This function creates an <iframe> (and YouTube player)
+        //    after the API code downloads.
+
+        var player;
+        var defaultVideo = 'BQCP-3czIpw';
+        //var defaultVideo = 'kcwV7xUUgoo';
+        var width = $(window).width()-$(window).width()/100*14;
+        var height = $(window).height()-150;
+
+        // quand le player est prêt
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: height,
+                width: width,
+                controls: 0,
+                videoId: defaultVideo, // mettre une vidéo par défaut !
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 0,
+                    'rel': 0,
+                    'iv_load_policy': 3,
+                    'modestbranding': 1,
+                    'showinfo': 0
+                },
+                events: {
+                    'onStateChange':
+                            function(e){
+                                if (e.data === YT.PlayerState.ENDED) {
+                                    player.playVideo();
+                                }
+
+
+                                // on essaie de rajouter les infos de la vidéo
+                                setInterval(function(){
+                                    $(".videoTitle").html(player.getVideoData().title.slice(0,35) + ((player.getVideoData().title.length > 35) ? '...' : '') + "<span></span>");
+                                    var cursor = player.getCurrentTime()/player.getDuration()*100;
+
+                                    $(".barPosition").width(cursor+'%');
+                                    $(".barCursor").css({
+                                        left: cursor + '%'
+                                    });
+
+                                    var infoTRemaining = new Date(null);
+                                    infoTRemaining.setHours(infoTRemaining.getHours()-1);
+                                    infoTRemaining.setSeconds(Math.abs(Math.round(player.getCurrentTime()-player.getDuration())));
+                                    $(".timeRemaining").html("-"+((infoTRemaining.getHours() != 0) ? ("0"+infoTRemaining.getHours()).slice(-2)+":" : "") + ("0"+infoTRemaining.getMinutes()).slice(-2) +":"+ ("0"+infoTRemaining.getSeconds()).slice(-2));
+                                },100);
+                            }
+                }
+            });
+
+            // on attend que le player soit prêt pour lancer notre application
+            loadApplication();
+
+            // au resize on change la taille du player
+            $(window).resize(function(){
+                $("#player").width($(window).width()-$(window).width()/100*14);
+                $("#player").height(player.height = $(window).height()-150);
+            });
+
+        }
+
     </script>
 
     <script>

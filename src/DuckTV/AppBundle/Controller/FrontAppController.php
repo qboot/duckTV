@@ -33,7 +33,7 @@ class FrontAppController extends Controller {
         }
 
 
-        // API METEO KARIM
+        // API TWITTER
         $twitterKey = $this->container->getParameter('api_twitter_key');
         $twitterSecret = $this->container->getParameter('api_twitter_secret');
 
@@ -44,18 +44,22 @@ class FrontAppController extends Controller {
 
         $tweets = $twitter->get('statuses/user_timeline', ['screen_name' => 'MorelKarim', 'exclude_replies' => true, 'count' => 3]);
 
-        $meteoservice = $this->container->get('duck_tv_app.openweather');
-
-        $meteo = ($meteoservice->OpenWeather('http://ducktv:ducktvpass@api.openweathermap.org/data/2.5/forecast/city?id=524901&APPID=1c6b7b720ef7a2eceb117a7164493e93&q=Troyes'));
-
-        //return new Response($meteoservice);
-
-        //dump($meteo);
-
         return $this->render('DuckTVAppBundle:FrontApp:index.html.twig',array(
-            'tweets' => $tweets,
-            'meteo' => $meteo
+            'tweets' => $tweets
         ));
+    }
+
+    // RENVOIE LA MÉTÉO DANS UN OBJET JSON
+    public function getWeatherAction() {
+        // API METEO
+        $apikey = "e9385cab3fa3491f0b19f3c44e2d7186";
+        $city = "6453634";
+        $weather = json_decode(file_get_contents("http://api.openweathermap.org/data/2.5/weather?id=".$city."&APPID=".$apikey."&units=metric"));
+
+        return new JsonResponse(array(
+            "weather" => $weather,
+            "actualDate" => new \DateTime()
+            ));
     }
 
     // RENVOIE LES VIDÉOS DANS UN OBJET JSON
@@ -65,7 +69,9 @@ class FrontAppController extends Controller {
         $now = new \DateTime();
 
         // POUR DEBUG A DELETE
-        //$now->modify("-1 day");
+        $now->modify("-2 day");
+        $now->modify("-7 hour");
+        // $now->modify("+21 minute");
 
         $grid = $em->getRepository("DuckTVAppBundle:Grid")->findBy(
             array("date" => $now)
