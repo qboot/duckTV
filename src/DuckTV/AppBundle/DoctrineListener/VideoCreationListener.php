@@ -45,6 +45,22 @@ class VideoCreationListener
         $dataJSON = json_decode($data);
         $durationJSON = json_decode($duration);
 
+	// test if video isset, if not, use the fallback video defined in parameters.yml
+        if(empty($dataJSON->items)) {
+          $fallback = $this->container->getParameter('youtube_fallback_video_url');
+          $fallbackId = $urlToId->VideoUrlToVideoId($fallback);
+
+          $data = file_get_contents("https://www.googleapis.com/youtube/v3/videos?key=". $apiKey ."&part=snippet&id=". $fallbackId);
+          $duration = file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=". $fallbackId ."&part=contentDetails&key=". $apiKey);
+
+          $dataJSON = json_decode($data);
+          $durationJSON = json_decode($duration);
+
+          // update current video entity with fallback informations
+          $video->setVideoUrl($fallback);
+          $video->setVideoId($fallbackId);
+        }
+
         // function from ISO8601 Service
         $ISO8601ToSeconds = $this->container->get('duck_tv_app.iso8601_to_seconds');
 

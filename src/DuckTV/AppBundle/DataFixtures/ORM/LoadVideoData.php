@@ -115,7 +115,7 @@ class LoadVideoData extends AbstractFixture implements OrderedFixtureInterface {
             "https://www.youtube.com/watch?v=P_6vDLq64gE&ab_channel=TED",
             "https://www.youtube.com/watch?v=w2itwFJCgFQ&ab_channel=TED",
             "https://www.youtube.com/watch?v=x2sT9KoII_M&ab_channel=TED",
-            "https://www.youtube.com/watch?v=muSCoCvrzDk&ab_channel=0ctopus",
+            "https://www.youtube.com/watch?v=aUVDOAPoZ9s",
             "https://www.youtube.com/watch?v=iTP_5CR0pRw&ab_channel=VipeRArt%27s(Nouvellecha%C3%AEne%E2%86%92L%C3%A9oLorini)",
             "https://www.youtube.com/watch?v=YmGNOqCFKLs&ab_channel=KarimDebbache",
             "https://www.youtube.com/watch?v=wCgs8edZGfE&ab_channel=KarimDebbache",

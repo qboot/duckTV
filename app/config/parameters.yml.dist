@@ -24,3 +24,6 @@ parameters:
     # Your twitter API key
     api_twitter_key:   ~
     api_twitter_secret: ~
+
+    # Your youtube video fallback
+    youtube_fallback_video_url: https://www.youtube.com/watch?v=KQS0KILDZ34
