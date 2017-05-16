@@ -20,6 +20,9 @@ Pour récupérer le projet via Git, il faut taper cette ligne dans la commande :
 
 Le projet Symfony est bien récupéré. Il faut maintenant mettre à jour les différents Bundles :
 
+**Important**
+Il faut créer une clef d'API Youtube Data et la set lors de la config, sinon le site ne fonctionnera tout simplement pas.
+
 	composer update
 
 On s'assure que les entités sont bien actualisées en faisant un : 
@@ -39,6 +42,13 @@ Enfin, pour remplir les bases de données avec les données que nous avons appor
 	php bin/console doctrine:fixtures:load
 
 À noter, cela peut prendre un peu de temps... L'application fait une requête vers l'API Youtube Data V3 pour chacune des 205 vidéos présentes dans les fixtures !
+
+Ne pas oublier de donner les droits à l'utilisateur du serveur web. Par exemple, pour Apache :
+
+	cd /var/www
+	chown -R www-data:www-data duckTV
+
+Le site devrait maintenant être en ligne et fonctionnel.
 
 ## Fonctionnement
 
